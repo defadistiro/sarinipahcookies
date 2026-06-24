@@ -1,0 +1,2465 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Portal Pesantren</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<style>
+/* =========================================================================
+   TOKENS
+   ========================================================================= */
+:root{
+  --ink:#1B2B26;
+  --ink-soft:#5B6B63;
+  --ink-faint:#8A9690;
+  --bg:#F6F1E7;
+  --surface:#FFFFFF;
+  --surface-2:#FBF8F0;
+  --primary:#0E6E4F;
+  --primary-dark:#0A4F39;
+  --primary-soft:#E3F0E8;
+  --accent:#C9962B;
+  --accent-soft:#F6ECD3;
+  --danger:#B3412B;
+  --danger-soft:#F6E2DC;
+  --success:#2F8F5B;
+  --success-soft:#E3F0E8;
+  --warning:#C9962B;
+  --warning-soft:#F6ECD3;
+  --border:#E6DDC8;
+  --radius:18px;
+  --radius-sm:12px;
+  --shadow: 0 10px 28px rgba(27,43,38,0.10);
+  --shadow-sm: 0 4px 10px rgba(27,43,38,0.06);
+  --font-display:'Sora', sans-serif;
+  --font-body:'Plus Jakarta Sans', sans-serif;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:var(--font-body);
+  background:var(--bg);
+  color:var(--ink);
+  -webkit-tap-highlight-color:transparent;
+  overscroll-behavior-y:none;
+}
+h1,h2,h3,h4{font-family:var(--font-display); margin:0; color:var(--ink); letter-spacing:-0.01em;}
+p{margin:0;}
+button{font-family:inherit; cursor:pointer;}
+input,select,textarea{font-family:inherit;}
+a{color:inherit;}
+
+/* signature motif: scalloped arch strip (mihrab silhouette) */
+.arch-strip{
+  height:13px;
+  background-image: radial-gradient(circle at 11px 0, transparent 9px, var(--primary) 9.5px);
+  background-size: 22px 13px;
+  background-repeat: repeat-x;
+  background-position: center top;
+}
+.arch-strip.light{
+  background-image: radial-gradient(circle at 11px 0, transparent 9px, rgba(255,255,255,0.55) 9.5px);
+}
+
+/* =========================================================================
+   LAYOUT SHELLS
+   ========================================================================= */
+#root{min-height:100vh; display:flex; flex-direction:column;}
+
+.center-screen{
+  min-height:100vh;
+  display:flex; align-items:center; justify-content:center;
+  padding:28px 18px;
+  background:
+    radial-gradient(circle at 15% 8%, rgba(201,150,43,0.10), transparent 45%),
+    radial-gradient(circle at 85% 92%, rgba(14,110,79,0.10), transparent 45%),
+    var(--bg);
+}
+
+/* =========================================================================
+   LOGIN
+   ========================================================================= */
+.login-card{
+  width:100%; max-width:380px;
+  background:var(--surface);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  overflow:hidden;
+  border:1px solid var(--border);
+}
+.login-head{
+  background:linear-gradient(155deg, var(--primary) 0%, var(--primary-dark) 100%);
+  padding:34px 28px 22px;
+  text-align:center;
+  color:#fff;
+  position:relative;
+}
+.login-badge{
+  width:56px; height:56px; margin:0 auto 14px;
+  border-radius:16px;
+  background:rgba(255,255,255,0.16);
+  display:flex; align-items:center; justify-content:center;
+  border:1px solid rgba(255,255,255,0.25);
+}
+.login-badge svg{width:28px; height:28px;}
+.login-badge.login-badge-logo{overflow:hidden; background:#fff;}
+.login-badge.login-badge-logo img{width:100%; height:100%; object-fit:cover;}
+.login-head h1{font-size:21px; font-weight:700; color:#fff;}
+.login-head p{font-size:13px; color:rgba(255,255,255,0.78); margin-top:4px;}
+.login-body{padding:26px 28px 28px;}
+
+.field{margin-bottom:16px;}
+.field label{
+  display:block; font-size:12.5px; font-weight:600; color:var(--ink-soft);
+  margin-bottom:6px; text-transform:uppercase; letter-spacing:0.04em;
+}
+.field input, .field select, .field textarea{
+  width:100%;
+  padding:11px 13px;
+  border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);
+  font-size:15px;
+  color:var(--ink);
+  background:var(--surface-2);
+  outline:none;
+  transition:border-color .15s, background .15s;
+}
+.field input:focus, .field select:focus, .field textarea:focus{
+  border-color:var(--primary);
+  background:#fff;
+}
+.field-hint{font-size:12px; color:var(--ink-faint); margin-top:5px; line-height:1.4;}
+
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  padding:12px 18px;
+  border-radius:var(--radius-sm);
+  border:none;
+  font-size:14.5px; font-weight:700;
+  transition:transform .12s, box-shadow .12s, opacity .12s;
+}
+.btn:active{transform:scale(0.98);}
+.btn-primary{background:var(--primary); color:#fff; box-shadow:0 6px 16px rgba(14,110,79,0.30);}
+.btn-primary:hover{background:var(--primary-dark);}
+.btn-block{width:100%;}
+.btn-ghost{background:transparent; color:var(--primary); border:1.5px solid var(--primary-soft);}
+.btn-ghost:hover{background:var(--primary-soft);}
+.btn-outline{background:#fff; color:var(--ink); border:1.5px solid var(--border);}
+.btn-outline:hover{border-color:var(--primary);}
+.btn-danger-ghost{background:var(--danger-soft); color:var(--danger); border:1.5px solid transparent;}
+.btn-sm{padding:8px 13px; font-size:13px;}
+.btn:disabled{opacity:0.55; cursor:not-allowed;}
+
+.login-error{
+  background:var(--danger-soft); color:var(--danger);
+  border-radius:var(--radius-sm); padding:10px 13px;
+  font-size:13.5px; margin-bottom:14px; display:none; font-weight:600;
+}
+
+details.server-settings{margin-top:18px; border-top:1px dashed var(--border); padding-top:14px;}
+details.server-settings summary{
+  cursor:pointer; font-size:13px; font-weight:700; color:var(--ink-soft);
+  list-style:none; display:flex; align-items:center; gap:6px;
+}
+details.server-settings summary::-webkit-details-marker{display:none;}
+.server-status{
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:12.5px; font-weight:600; margin-top:10px; padding:6px 10px;
+  border-radius:99px; background:var(--surface-2);
+}
+.dot{width:7px; height:7px; border-radius:50%; background:var(--ink-faint); flex:none;}
+.dot.ok{background:var(--success);}
+.dot.bad{background:var(--danger);}
+
+/* =========================================================================
+   APP SHELL
+   ========================================================================= */
+.app-shell{display:flex; flex-direction:column; min-height:100vh;}
+
+.app-header{
+  background:linear-gradient(155deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color:#fff;
+  padding:18px 18px 16px;
+  position:fixed; top:0; left:0; right:0; z-index:20;
+}
+.app-header-spacer{ width:100%; }
+.app-header-row{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+.app-id{display:flex; align-items:center; gap:11px;}
+.app-id .avatar{
+  width:42px; height:42px; border-radius:13px;
+  background:rgba(255,255,255,0.18); border:1px solid rgba(255,255,255,0.28);
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-display); font-weight:700; font-size:16px;
+}
+.app-id .who .greet{font-size:11.5px; color:rgba(255,255,255,0.72); font-weight:600; letter-spacing:.03em; text-transform:uppercase;}
+.app-id .who .name{font-size:16px; font-weight:700; font-family:var(--font-display); margin-top:1px;}
+.role-chip{
+  display:inline-flex; margin-top:3px;
+  font-size:11px; font-weight:700; padding:2px 9px; border-radius:99px;
+  background:rgba(255,255,255,0.18); color:#fff;
+}
+.icon-btn{
+  width:38px; height:38px; border-radius:12px;
+  background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.22);
+  display:flex; align-items:center; justify-content:center; color:#fff;
+  flex:none;
+}
+.icon-btn svg{width:18px; height:18px;}
+
+.page-title{padding:18px 18px 4px;}
+.page-title h2{font-size:19px;}
+.page-title p{font-size:13px; color:var(--ink-soft); margin-top:3px;}
+
+.app-main{flex:1; padding:14px 16px 100px; max-width:680px; width:100%; margin:0 auto;}
+
+/* bottom nav */
+.bottom-nav{
+  position:fixed; left:0; right:0; bottom:0; z-index:30;
+  background:var(--surface);
+  border-top:1px solid var(--border);
+  display:flex;
+  padding:7px 10px calc(7px + env(safe-area-inset-bottom));
+  box-shadow:0 -8px 24px rgba(27,43,38,0.08);
+}
+.nav-item{
+  flex:1; display:flex; flex-direction:column; align-items:center; gap:3px;
+  padding:7px 4px; border-radius:12px; background:none; border:none;
+  color:var(--ink-faint); font-size:11.5px; font-weight:600;
+}
+.nav-item svg{width:21px; height:21px;}
+.nav-item.active{color:var(--primary); background:var(--primary-soft);}
+
+/* =========================================================================
+   CARDS / SECTIONS
+   ========================================================================= */
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow-sm);
+  padding:18px;
+  margin-bottom:14px;
+}
+.card-head{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px;}
+.card-head h3{font-size:15px;}
+.card-sub{font-size:12.5px; color:var(--ink-soft);}
+
+.profile-card{text-align:center; padding-top:26px;}
+.profile-photo{
+  width:92px; height:92px; border-radius:26px; margin:0 auto 14px;
+  background:var(--primary-soft); color:var(--primary);
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-display); font-weight:800; font-size:30px;
+  border:3px solid #fff; box-shadow:var(--shadow-sm);
+}
+.profile-name{font-size:18px; font-weight:700;}
+.profile-sub{font-size:13px; color:var(--ink-soft); margin-top:3px;}
+.profile-badge{
+  display:inline-block; margin-top:10px; font-size:12px; font-weight:700;
+  padding:4px 12px; border-radius:99px; background:var(--accent-soft); color:#8a6a1c;
+}
+.detail-list{margin-top:18px; border-top:1px solid var(--border); padding-top:6px;}
+.detail-row{
+  display:flex; justify-content:space-between; gap:14px;
+  padding:11px 2px; border-bottom:1px solid var(--border);
+  font-size:13.5px; text-align:left;
+}
+.detail-row:last-child{border-bottom:none;}
+.detail-row .k{color:var(--ink-soft); font-weight:600; flex:none; width:42%;}
+.detail-row .v{color:var(--ink); font-weight:600; text-align:right; flex:1;}
+.detail-row .v.empty{color:var(--ink-faint); font-weight:500; font-style:italic;}
+
+/* segmented tabs (histori pembayaran) */
+.seg{
+  display:flex; gap:6px; background:var(--surface-2); padding:5px;
+  border-radius:14px; margin-bottom:14px; border:1px solid var(--border);
+}
+.seg button{
+  flex:1; padding:9px 6px; border:none; background:none; border-radius:10px;
+  font-size:12.5px; font-weight:700; color:var(--ink-soft);
+}
+.seg button.active{background:var(--primary); color:#fff; box-shadow:0 4px 10px rgba(14,110,79,0.25);}
+
+/* summary strip */
+.summary-strip{
+  display:flex; align-items:center; justify-content:space-between;
+  background:var(--primary-soft); border-radius:var(--radius-sm);
+  padding:13px 15px; margin-bottom:14px;
+}
+.summary-strip .label{font-size:12.5px; color:var(--primary-dark); font-weight:700;}
+.summary-strip .amount{font-family:var(--font-display); font-size:18px; font-weight:800; color:var(--primary-dark);}
+
+/* list rows (payment / nilai) */
+.row-item{
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm);
+  padding:13px 14px; margin-bottom:10px;
+}
+.row-item-top{display:flex; align-items:flex-start; justify-content:space-between; gap:10px;}
+.row-item-title{font-size:14.5px; font-weight:700;}
+.row-item-meta{font-size:12px; color:var(--ink-soft); margin-top:3px;}
+.row-item-amount{font-family:var(--font-display); font-weight:800; font-size:15.5px; white-space:nowrap;}
+.row-item-foot{
+  display:flex; align-items:center; justify-content:space-between;
+  margin-top:10px; padding-top:10px; border-top:1px dashed var(--border);
+  font-size:12px; color:var(--ink-soft);
+}
+.petugas-foto{
+  width:18px; height:18px; border-radius:50%; object-fit:cover;
+  border:1px solid var(--border); flex:none;
+}
+
+.badge{
+  display:inline-flex; align-items:center; gap:4px;
+  font-size:11.5px; font-weight:700; padding:4px 10px; border-radius:99px;
+}
+.badge-success{background:var(--success-soft); color:var(--success);}
+.badge-danger{background:var(--danger-soft); color:var(--danger);}
+.badge-warning{background:var(--warning-soft); color:#8a6a1c;}
+.badge-muted{background:var(--surface-2); color:var(--ink-faint);}
+
+.score-pill{
+  font-family:var(--font-display); font-weight:800; font-size:16px;
+  padding:6px 13px; border-radius:12px; white-space:nowrap;
+}
+.score-pill.high{background:var(--success-soft); color:var(--success);}
+.score-pill.mid{background:var(--warning-soft); color:#8a6a1c;}
+.score-pill.low{background:var(--danger-soft); color:var(--danger);}
+.score-pill.none{background:var(--surface-2); color:var(--ink-faint); font-size:12px; font-weight:600;}
+
+/* mapel cards (guru) */
+.mapel-card{
+  border:1px solid var(--border); border-radius:var(--radius-sm);
+  padding:15px; margin-bottom:12px; background:var(--surface);
+}
+.mapel-top{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+.mapel-name{font-size:15.5px; font-weight:700;}
+.mapel-class{
+  font-size:11.5px; font-weight:700; color:var(--primary);
+  background:var(--primary-soft); padding:3px 10px; border-radius:99px; white-space:nowrap;
+}
+.mapel-meta{display:flex; flex-wrap:wrap; gap:14px; margin-top:11px;}
+.mapel-meta-item{font-size:12.5px; color:var(--ink-soft); display:flex; align-items:center; gap:6px;}
+.mapel-meta-item svg{width:14px; height:14px; flex:none;}
+.mapel-actions{margin-top:13px; display:flex; gap:8px;}
+
+/* =========================================================================
+   MODAL TAMBAH PEMBAYARAN (ADMIN)
+   ========================================================================= */
+.modal-overlay{
+  position:fixed; inset:0; z-index:200;
+  background:rgba(27,43,38,0.45);
+  display:flex; align-items:flex-end; justify-content:center;
+  padding:0;
+  animation:fadeIn .18s ease;
+}
+@keyframes fadeIn{ from{opacity:0} to{opacity:1} }
+.modal-sheet{
+  width:100%; max-width:520px;
+  background:var(--surface);
+  border-radius:var(--radius) var(--radius) 0 0;
+  box-shadow:0 -12px 40px rgba(27,43,38,0.18);
+  padding:0 0 env(safe-area-inset-bottom);
+  max-height:92vh;
+  display:flex; flex-direction:column;
+  animation:slideUp .22s cubic-bezier(.32,1,.56,1);
+}
+@keyframes slideUp{ from{transform:translateY(60px);opacity:0} to{transform:none;opacity:1} }
+.modal-head{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:18px 18px 14px;
+  border-bottom:1px solid var(--border);
+  flex:none;
+}
+.modal-head h3{ font-size:16px; display:flex; align-items:center; gap:6px; }
+.modal-head h3 svg{ width:17px; height:17px; flex:none; }
+.modal-close{
+  width:34px; height:34px; border-radius:10px;
+  background:var(--surface-2); border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; color:var(--ink-soft); flex:none;
+}
+.modal-body{
+  flex:1; overflow-y:auto; padding:16px 18px 20px;
+}
+.modal-footer{
+  padding:12px 18px 16px;
+  border-top:1px solid var(--border);
+  display:flex; gap:9px; flex:none;
+}
+.modal-footer .btn{ flex:1; }
+
+/* row actions (cetak struk) */
+.row-item-actions{
+  display:flex; gap:8px; margin-top:10px; padding-top:10px; border-top:1px dashed var(--border);
+}
+.row-item-actions .btn{ flex:1; padding:8px 10px; font-size:12.5px; }
+
+/* ====================== STRUK PEMBAYARAN (PREVIEW & PRINT) ================== */
+.struk-card{
+  background:#fff;
+  border: 1px solid var(--primary);
+  border-radius:2px;
+  padding:0;
+  width:302px;
+  margin:0 auto;
+  box-sizing:border-box;
+  overflow:hidden;
+  box-shadow:0 0 0 5px #eaf5ee, 0 0 0 7px var(--primary);
+}
+
+/* ── HEADER ── */
+.struk-card .sk-header{
+  display:flex; align-items:flex-start; justify-content:space-between;
+  gap:4px;
+  background:linear-gradient(160deg,#d6f0e0 0%,#eaf5ee 60%,#d6f0e0 100%);
+  padding:10px 8px 10px 8px;
+  
+  position:relative;
+}
+.struk-card .sk-logo{
+  width:52px; height:52px; flex:none; flex-shrink:0;
+  display:flex; align-items:flex-start; justify-content:center;
+  padding-top:1px;
+}
+.struk-card .sk-logo img{
+  width:100%; height:100%; object-fit:contain; object-position:top center;
+}
+.struk-card .sk-header-text{
+  flex:1; text-align:center; padding:0 3px; min-width:0;
+}
+.struk-card .sk-pp{
+  font-family:var(--font-display); font-weight:600; font-size:10px;
+  color:var(--primary); letter-spacing:0.04em; text-transform:uppercase;
+}
+.struk-card .sk-pesantren{
+  font-family:var(--font-display); font-weight:800; font-size:17px;
+  color:var(--primary-dark); line-height:1.1; margin-top:1px;
+  white-space:nowrap; letter-spacing:-0.02em;
+}
+.struk-card .sk-alamat{
+  font-size:6px; color:var(--ink-soft); margin-top:5px; line-height:1.55;
+}
+
+/* ── DEKORASI GIGI GUNTING ── */
+.struk-card .sk-perforated{
+  display:flex; align-items:center; gap:0;
+  padding:0 0; margin:0;
+  height:12px; overflow:hidden; background:#fff;
+  position:relative;
+}
+.struk-card .sk-perforated::before,
+.struk-card .sk-perforated::after{
+  content:'';
+  display:block;
+  width:12px; height:12px;
+  border-radius:50%;
+  background:var(--bg);
+  flex:none;
+  position:absolute;
+  top:0;
+}
+.struk-card .sk-perforated::before{ left:-6px; }
+.struk-card .sk-perforated::after{ right:-6px; }
+.struk-card .sk-perf-line{
+  flex:1; border-top:1.5px dashed #b8ddc8; margin:0 8px;
+}
+
+/* ── JUDUL JENIS ── */
+.struk-card .sk-judul-wrap{
+  padding:10px 12px 0;
+  text-align: center;
+}
+.struk-card .sk-judul{
+  background:var(--primary-soft);
+  color:var(--primary-dark);
+  font-weight:800; font-size:12px;
+  border-radius:8px;
+  padding:8px 6px;
+  border:1.5px solid #b8ddc8;
+  letter-spacing:0.03em;
+}
+
+/* ── NO STRUK & TANGGAL ── */
+.struk-card .sk-meta{
+  display:flex; justify-content:space-between; align-items:center;
+  padding:8px 12px 6px; gap:6px;
+}
+.struk-card .sk-nostruk{
+  font-family:monospace; font-size:9px; font-weight:700;
+  color:var(--primary); background:var(--primary-soft);
+  padding:3px 7px; border-radius:4px; border:1px solid #b8ddc8;
+  letter-spacing:0.04em; white-space:nowrap;
+}
+.struk-card .sk-tanggal{
+  font-size:9px; font-weight:700;
+  color:#8a6a1c; background:var(--warning-soft);
+  padding:3px 8px; border-radius:4px;
+  border:1.5px solid var(--warning);
+  white-space:nowrap;
+}
+
+/* ── TABEL DATA ── */
+.struk-card .sk-rows{
+  text-align:left; margin:4px 12px 0;
+  border-top:1.5px solid var(--border);
+  padding-top:4px;
+}
+.struk-card .sk-row{
+  display:flex; justify-content:space-between; gap:8px;
+  padding:6px 0; border-bottom:1px solid #eee; font-size:12px;
+}
+.struk-card .sk-row:last-child{ border-bottom:none; }
+.struk-card .sk-row .k{
+  color:var(--primary); font-weight:700; flex:none; width:88px;
+}
+.struk-card .sk-row .v{
+  text-align:right; word-break:break-word; color:var(--ink); font-size:12px;
+}
+.struk-card .sk-row.sk-row-nominal .v{
+  font-family:var(--font-display); font-weight:800; font-size:13px;
+  color:var(--primary-dark);
+}
+.struk-card .sk-row.sk-row-status .v{
+  color:var(--success); font-weight:800;
+}
+
+/* ── SECTION TOKEN (tampilan biasa, tanpa background & icon, huruf monospace) ── */
+.struk-card .sk-token-section{
+  margin:10px 12px 0;
+  padding-top:10px;
+  border-top:1px dashed #ccc;
+}
+.struk-card .sk-token-label{
+  font-family:'Courier New', monospace;
+  font-size:8.5px; font-weight:700; letter-spacing:0.12em;
+  text-transform:uppercase; color:var(--ink-faint);
+  margin-bottom:6px; text-align:center;
+}
+.struk-card .sk-token-row{
+  display:flex; gap:8px; align-items:center; margin-bottom:5px;
+}
+.struk-card .sk-token-row:last-child{ margin-bottom:0; }
+.struk-card .sk-token-key{
+  font-family:'Courier New', monospace;
+  font-size:8.5px; color:var(--ink-soft); font-weight:700;
+  letter-spacing:0.04em; text-transform:uppercase; flex:none; width:78px;
+}
+.struk-card .sk-token-val{
+  font-family:'Courier New', monospace; font-size:11.5px; font-weight:700;
+  color:var(--ink); letter-spacing:0.08em; flex:1;
+  text-align:right;
+}
+
+/* ── BADGE STATUS LUNAS (tanpa background & centang) ── */
+.struk-card .sk-lunas-badge{
+  text-align:center;
+  margin:10px 12px 0;
+}
+.struk-card .sk-lunas-badge .sk-lunas-text{
+  font-size:11.5px; font-weight:800; color:var(--success);
+  letter-spacing:0.04em; text-transform:uppercase;
+}
+
+/* ── FOOTER ── */
+.struk-card .sk-foot{
+  margin:10px 12px 12px; padding-top:9px;
+  border-top:1px dashed #ccc;
+  text-align:center;
+}
+.struk-card .sk-foot-main{
+  font-size:10.5px; font-weight:700; color:var(--ink-soft); margin-bottom:2px;
+}
+.struk-card .sk-foot-ts{
+  font-size:8.5px; color:var(--ink-faint); font-family:monospace;
+}
+/* FAB Tambah Pembayaran */
+.fab-tambah{
+  position:fixed; right:18px; bottom:calc(72px + env(safe-area-inset-bottom));
+  z-index:100;
+  width:52px; height:52px; border-radius:16px;
+  background:var(--primary); color:#fff;
+  border:none; box-shadow:0 6px 20px rgba(14,110,79,0.38);
+  display:flex; align-items:center; justify-content:center;
+  font-size:28px; font-weight:300; line-height:1;
+  cursor:pointer;
+  transition:transform .12s, box-shadow .12s;
+}
+.fab-tambah:active{ transform:scale(0.93); }
+.fab-tambah svg{ width:22px; height:22px; }
+
+/* Badge notifikasi angka di menu bawah (mis. Histori Bayar yang masih menunggu) */
+.nav-icon-wrap{ position:relative; display:inline-flex; }
+.nav-badge{
+  position:absolute; top:-4px; right:-7px;
+  min-width:14px; height:14px; padding:0 3px;
+  border-radius:999px; background:var(--danger);
+  color:#fff; font-size:8.5px; font-weight:700;
+  display:flex; align-items:center; justify-content:center;
+  line-height:1; box-shadow:0 0 0 2px var(--surface);
+}
+
+/* select santri scrollable dalam modal */
+#modalSiswaSelect{ height:46px; }
+
+/* nilai watermark banner */
+.nilai-watermark{
+  display:flex; justify-content:center; align-items:center;
+  margin-bottom:14px; opacity:0.92;
+}
+.nilai-watermark img{ width:100%; max-width:420px; height:auto; display:block; }
+.nilai-table-wrap{overflow-x:auto; border:1px solid var(--border); border-radius:var(--radius-sm);}
+table.nilai-table{width:100%; border-collapse:collapse; min-width:480px;}
+table.nilai-table th{
+  background:var(--surface-2); font-size:11.5px; text-transform:uppercase; letter-spacing:.03em;
+  color:var(--ink-soft); text-align:left; padding:10px 12px; border-bottom:1px solid var(--border);
+}
+table.nilai-table td{padding:9px 12px; border-bottom:1px solid var(--border); font-size:13.5px; vertical-align:middle;}
+table.nilai-table tr:last-child td{border-bottom:none;}
+
+/* empty / loading states */
+.empty-state{
+  text-align:center; padding:48px 18px; color:var(--ink-soft);
+}
+.empty-state svg{width:44px; height:44px; color:var(--ink-faint); margin-bottom:12px;}
+.empty-state .t{font-weight:700; color:var(--ink); margin-bottom:4px; font-size:14.5px;}
+.empty-state .s{font-size:13px;}
+
+.skeleton{
+  background:linear-gradient(90deg, var(--surface-2) 25%, var(--border) 37%, var(--surface-2) 63%);
+  background-size:400% 100%; animation:shimmer 1.4s ease infinite;
+  border-radius:10px;
+}
+@keyframes shimmer{0%{background-position:100% 50%;}100%{background-position:0 50%;}}
+.skel-row{height:62px; margin-bottom:10px;}
+
+/* toast */
+#toast-wrap{
+  position:fixed; top:14px; left:0; right:0; z-index:200;
+  display:flex; flex-direction:column; align-items:center; gap:8px; pointer-events:none;
+}
+.toast{
+  pointer-events:auto;
+  max-width:320px; width:calc(100% - 32px);
+  background:var(--ink); color:#fff;
+  font-size:13.5px; font-weight:600;
+  padding:12px 16px; border-radius:12px;
+  box-shadow:0 10px 24px rgba(0,0,0,0.22);
+  display:flex; align-items:center; gap:9px;
+  animation:toastIn .22s ease;
+}
+.toast.success{background:var(--primary-dark);}
+.toast.error{background:#7A2C1B;}
+@keyframes toastIn{from{opacity:0; transform:translateY(-8px);} to{opacity:1; transform:translateY(0);}}
+
+.divider-label{
+  font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.05em;
+  color:var(--ink-faint); margin:18px 2px 10px;
+}
+
+.section-fade{animation:fadeUp .22s ease;}
+@keyframes fadeUp{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+@media (max-width:380px){
+  .login-head{padding:28px 20px 18px;}
+  .login-body{padding:20px 20px 24px;}
+}
+</style>
+</head>
+<body>
+<div id="toast-wrap"></div>
+<div id="root"></div>
+<script>
+/* =========================================================================
+   PORTAL PESANTREN — APP LOGIC
+   Single-file app, vanilla JS, backend via Google Apps Script (GAS).
+   ========================================================================= */
+
+/* ---------------------------- STATE & STORAGE --------------------------- */
+var LS_GAS_URL = 'gasUrl';
+var LS_SESSION = 'session';
+
+function getGasUrl(){ return localStorage.getItem(LS_GAS_URL) || ''; }
+function setGasUrl(v){ localStorage.setItem(LS_GAS_URL, v); }
+function getSession(){ try{ return JSON.parse(localStorage.getItem(LS_SESSION) || 'null'); }catch(e){ return null; } }
+function setSession(u){ localStorage.setItem(LS_SESSION, JSON.stringify(u)); }
+function clearSession(){ localStorage.removeItem(LS_SESSION); }
+
+var STATE = {
+  user: getSession(),
+  tab: null,        // current bottom-nav tab
+  histJenis: 'sppsekolah', // sub-tab for histori pembayaran
+  cache: {}         // simple in-memory cache per session
+};
+
+/* --------------------------------- UTIL --------------------------------- */
+function qs(sel, root){ return (root||document).querySelector(sel); }
+function qsa(sel, root){ return Array.prototype.slice.call((root||document).querySelectorAll(sel)); }
+function escHtml(str){
+  if (str === null || str === undefined) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function rupiah(n){
+  n = Number(n) || 0;
+  return 'Rp ' + n.toLocaleString('id-ID');
+}
+var BULAN_ID = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+var BULAN_ID_FULL = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+function tanggalID(str){
+  if (!str) return '-';
+  var d = new Date(str);
+  if (isNaN(d.getTime())) return String(str);
+  return d.getDate() + ' ' + BULAN_ID[d.getMonth()] + ' ' + d.getFullYear();
+}
+/* ---- Helper filter bulan untuk Histori Pembayaran (Admin) ---- */
+function currentMonthKey(){
+  var d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+}
+function monthKeyFromTanggal(str){
+  if (!str) return '';
+  var d = new Date(str);
+  if (isNaN(d.getTime())) return '';
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+}
+function bulanLabelFromKey(key){
+  if (!key) return '';
+  var p = key.split('-');
+  var idx = Number(p[1]) - 1;
+  return (BULAN_ID_FULL[idx] || '') + ' ' + p[0];
+}
+/* Generate n bulan terakhir (termasuk bulan ini) sebagai opsi dropdown, terbaru di atas */
+function bulanOptionsTerakhir(n){
+  var out = [];
+  var now = new Date();
+  for (var i = 0; i < n; i++){
+    var d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    var key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+    out.push({ key: key, label: BULAN_ID_FULL[d.getMonth()] + ' ' + d.getFullYear() });
+  }
+  return out;
+}
+function initials(name){
+  if (!name) return '?';
+  var parts = String(name).trim().split(/\s+/);
+  var s = parts[0].charAt(0);
+  if (parts.length > 1) s += parts[parts.length-1].charAt(0);
+  return s.toUpperCase();
+}
+function statusInfo(status){
+  if (status === 'terima') return { label:'Diterima', cls:'badge-success' };
+  if (status === 'tolak')  return { label:'Ditolak',  cls:'badge-danger' };
+  return { label:'Menunggu', cls:'badge-warning' };
+}
+function scorePillClass(n){
+  if (n === null || n === undefined || n === '') return 'none';
+  n = Number(n);
+  if (n >= 75) return 'high';
+  if (n >= 60) return 'mid';
+  return 'low';
+}
+
+/* --------------------------------- TOAST --------------------------------- */
+function toast(msg, type){
+  var wrap = qs('#toast-wrap');
+  var el = document.createElement('div');
+  el.className = 'toast' + (type ? ' ' + type : '');
+  el.textContent = msg;
+  wrap.appendChild(el);
+  setTimeout(function(){
+    el.style.transition = 'opacity .25s, transform .25s';
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(-8px)';
+    setTimeout(function(){ el.remove(); }, 250);
+  }, 2600);
+}
+
+/* ---------------------------------- API ---------------------------------- */
+/**
+ * Memanggil backend (GAS atau langsung receiver.php).
+ * Backend PHP (receiver.php) selalu membalas dengan format:
+ *   { success: bool, message: string, ...extra }
+ * Untuk kompatibilitas dengan kode di file ini yang memeriksa
+ * `res.ok` / `res.msg`, setiap respons dinormalisasi di sini sehingga
+ * SELALU memiliki properti `ok` (alias success) dan `msg` (alias message),
+ * di samping properti aslinya (success/message/data/dst tetap ada).
+ */
+function normalizeApiResponse(res){
+  if (!res || typeof res !== 'object') return res;
+  if (res.ok === undefined)  res.ok  = (res.success === undefined) ? false : !!res.success;
+  if (res.msg === undefined) res.msg = res.message || '';
+  return res;
+}
+
+/**
+ * Backend (receiver.php & Code.gs) menggunakan penamaan action snake_case
+ * (mis. get_nilai, get_mapel_guru, simpan_nilai_batch), sedangkan kode di
+ * file ini menulis pemanggilan action dengan gaya camelCase (mis. getNilai,
+ * getMapelGuru, simpanNilaiBatch) agar konsisten dengan gaya JS pada
+ * umumnya. Fungsi ini menjembatani keduanya secara otomatis sehingga
+ * kedua sisi tidak perlu disamakan manual satu per satu.
+ */
+function toSnakeCaseAction(action){
+  return String(action).replace(/[A-Z]/g, function(c){ return '_' + c.toLowerCase(); });
+}
+
+function apiCall(action, payload){
+  var url = getGasUrl();
+  if (!url){
+    toast('URL Apps Script belum diatur. Buka halaman Profil untuk mengaturnya.', 'error');
+    return Promise.reject(new Error('GAS URL belum diatur'));
+  }
+  var body = Object.assign({ action: toSnakeCaseAction(action) }, payload || {});
+  return fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // hindari preflight CORS
+    body: JSON.stringify(body)
+  })
+  .then(function(res){
+    if (!res.ok && res.status >= 500){
+      // server error HTTP (bukan field res.ok dari JSON, ini status HTTP fetch)
+      throw new Error('Server error HTTP ' + res.status);
+    }
+    return res.text();
+  })
+  .then(function(text){
+    var parsed;
+    try { parsed = JSON.parse(text); }
+    catch (e) {
+      throw new Error('Respons server bukan JSON yang valid: ' + text.substring(0, 150));
+    }
+    return normalizeApiResponse(parsed);
+  })
+  .catch(function(err){
+    toast('Gagal terhubung ke server. Periksa URL Apps Script di halaman Profil.', 'error');
+    throw err;
+  });
+}
+
+/* ================================ ROUTER ================================= */
+function boot(){
+  STATE.user = getSession();
+  if (STATE.user){
+    renderShell();
+  } else {
+    renderLogin();
+  }
+}
+
+function goLogout(){
+  clearSession();
+  STATE.user = null;
+  STATE.tab = null;
+  STATE.cache = {};
+  renderLogin();
+}
+window.goLogout = goLogout;
+
+/* ================================ LOGIN VIEW ============================== */
+function renderLogin(){
+  var savedUrl = getGasUrl();
+  var root = qs('#root');
+  root.innerHTML =
+    '<div class="center-screen">' +
+      '<div class="login-card section-fade">' +
+        '<div class="login-head">' +
+          '<div class="login-badge login-badge-logo"><img src="anggota_1_1752596230.svg" alt="Logo Portal Pesantren"></div>' +
+          '<h1>Portal Pesantren</h1>' +
+          '<p>Nilai &middot; Pembayaran &middot; Profil Santri</p>' +
+        '</div>' +
+        '<div class="arch-strip"></div>' +
+        '<div class="login-body">' +
+          '<div class="login-error" id="loginError"></div>' +
+          '<div class="field">' +
+            '<label>Username</label>' +
+            '<input type="text" id="inpUsername" autocomplete="username" placeholder="Masukkan username">' +
+          '</div>' +
+          '<div class="field">' +
+            '<label>Password</label>' +
+            '<input type="password" id="inpPassword" autocomplete="current-password" placeholder="Masukkan password">' +
+          '</div>' +
+          '<button class="btn btn-primary btn-block" id="btnLogin" onclick="doLogin()">Masuk</button>' +
+
+          '<details class="server-settings" id="serverSettings" ' + (savedUrl ? '' : 'open') + '>' +
+            '<summary>' + iconGear() + ' Pengaturan Server (Google Apps Script)</summary>' +
+            '<div class="field" style="margin-top:12px;">' +
+              '<label>URL Web App GAS</label>' +
+              '<input type="text" id="inpGasUrlLogin" placeholder="https://script.google.com/macros/s/.../exec" value="' + escHtml(savedUrl) + '">' +
+              '<div class="field-hint">Tempel URL deployment Web App dari Google Apps Script di sini agar aplikasi bisa mengambil data sekolah.</div>' +
+            '</div>' +
+            '<div style="display:flex; gap:8px;">' +
+              '<button class="btn btn-outline btn-sm" style="flex:1;" onclick="testGasFromLogin()">Tes Koneksi</button>' +
+              '<button class="btn btn-ghost btn-sm" style="flex:1;" onclick="saveGasFromLogin()">Simpan URL</button>' +
+            '</div>' +
+            '<div id="loginServerStatus"></div>' +
+          '</details>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+
+  qs('#inpPassword').addEventListener('keydown', function(e){ if (e.key === 'Enter') doLogin(); });
+}
+
+function saveGasFromLogin(){
+  var v = qs('#inpGasUrlLogin').value.trim();
+  if (!v){ toast('URL belum diisi.', 'error'); return; }
+  setGasUrl(v);
+  toast('URL server disimpan.', 'success');
+}
+
+function testGasFromLogin(){
+  var v = qs('#inpGasUrlLogin').value.trim();
+  if (!v){ toast('URL belum diisi.', 'error'); return; }
+  setGasUrl(v);
+  var box = qs('#loginServerStatus');
+  box.innerHTML = '<div class="server-status"><span class="dot"></span> Menguji koneksi...</div>';
+  apiCall('ping', {}).then(function(res){
+    if (res && res.ok){
+      box.innerHTML = '<div class="server-status"><span class="dot ok"></span> Terhubung ke server</div>';
+    } else {
+      box.innerHTML = '<div class="server-status"><span class="dot bad"></span> Server merespons tapi gagal</div>';
+    }
+  }).catch(function(){
+    box.innerHTML = '<div class="server-status"><span class="dot bad"></span> Tidak dapat terhubung</div>';
+  });
+}
+
+function doLogin(){
+  var username = qs('#inpUsername').value.trim();
+  var password = qs('#inpPassword').value;
+  var errBox = qs('#loginError');
+  errBox.style.display = 'none';
+
+  if (!getGasUrl()){
+    errBox.textContent = 'Atur URL Apps Script terlebih dahulu di "Pengaturan Server" di bawah.';
+    errBox.style.display = 'block';
+    qs('#serverSettings').setAttribute('open', '');
+    return;
+  }
+  if (!username || !password){
+    errBox.textContent = 'Username dan password wajib diisi.';
+    errBox.style.display = 'block';
+    return;
+  }
+
+  var btn = qs('#btnLogin');
+  btn.disabled = true;
+  btn.textContent = 'Memproses...';
+
+  apiCall('login', { username: username, password: password }).then(function(res){
+    btn.disabled = false;
+    btn.textContent = 'Masuk';
+    if (res && res.ok){
+      setSession(res.user);
+      STATE.user = res.user;
+      STATE.cache = {};
+      toast('Selamat datang, ' + res.user.nama + '!', 'success');
+      renderShell();
+    } else {
+      errBox.textContent = (res && res.msg) ? res.msg : 'Gagal masuk.';
+      errBox.style.display = 'block';
+    }
+  }).catch(function(){
+    btn.disabled = false;
+    btn.textContent = 'Masuk';
+    errBox.textContent = 'Tidak dapat terhubung ke server.';
+    errBox.style.display = 'block';
+  });
+}
+window.doLogin = doLogin;
+window.saveGasFromLogin = saveGasFromLogin;
+window.testGasFromLogin = testGasFromLogin;
+
+/* ================================ APP SHELL ================================ */
+function roleLabel(level){
+  var map = { 'Siswa':'Santri', 'Guru':'Guru', 'Admin':'Admin', 'Kepala Sekolah':'Kepala Sekolah', 'Kepala Yayasan':'Kepala Yayasan', 'Kepala Dapur':'Kepala Dapur' };
+  return map[level] || level;
+}
+function navForRole(level){
+  if (level === 'Siswa'){
+    return [
+      { key:'nilai',   label:'Nilai',   icon: iconBook() },
+      { key:'histori', label:'Histori', icon: iconWallet() },
+      { key:'profil',  label:'Profil',  icon: iconUser() }
+    ];
+  }
+  // Admin punya menu tambahan Histori Bayar
+  if (level === 'Admin'){
+    return [
+      { key:'mapel',        label:'Mapel & Jadwal', icon: iconCalendar() },
+      { key:'input',        label:'Lihat Nilai',    icon: iconBook() },
+      { key:'historiadmin', label:'Histori Bayar',  icon: iconWallet() },
+      { key:'profil',       label:'Profil',         icon: iconUser() }
+    ];
+  }
+  // Guru / Kepala* dianggap mode guru
+  return [
+    { key:'mapel',  label:'Mapel & Jadwal', icon: iconCalendar() },
+    { key:'input',  label:'Lihat Nilai',    icon: iconBook() },
+    { key:'profil', label:'Profil',         icon: iconUser() }
+  ];
+}
+
+function renderShell(){
+  var u = STATE.user;
+  var nav = navForRole(u.level);
+  if (!STATE.tab) STATE.tab = nav[0].key;
+
+  var root = qs('#root');
+  root.innerHTML =
+    '<div class="app-shell">' +
+      '<div class="app-header" id="appHeader">' +
+        '<div class="app-header-row">' +
+          '<div class="app-id">' +
+            '<div class="avatar">' + escHtml(initials(u.nama)) + '</div>' +
+            '<div class="who">' +
+              '<div class="greet">Selamat datang</div>' +
+              '<div class="name">' + escHtml(u.nama) + '</div>' +
+              '<span class="role-chip">' + escHtml(roleLabel(u.level)) + '</span>' +
+            '</div>' +
+          '</div>' +
+          '<button class="icon-btn" title="Keluar" onclick="confirmLogout()">' + iconLogout() + '</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="app-header-spacer" id="appHeaderSpacer"></div>' +
+      '<div id="pageTitle" class="page-title"></div>' +
+      '<div class="app-main" id="appMain"></div>' +
+      '<div class="bottom-nav" id="bottomNav"></div>' +
+    '</div>';
+
+  syncHeaderSpacer();
+  window.addEventListener('resize', syncHeaderSpacer);
+
+  renderBottomNav(nav);
+  renderTab(STATE.tab);
+  refreshBadgeHistoriAdmin();
+}
+
+function syncHeaderSpacer(){
+  var header = qs('#appHeader');
+  var spacer = qs('#appHeaderSpacer');
+  if (!header || !spacer) return;
+  spacer.style.height = header.offsetHeight + 'px';
+}
+
+function renderBottomNav(nav){
+  var html = nav.map(function(item){
+    var badge = '';
+    if (item.key === 'historiadmin' && Number(STATE.pendingBayarCount) > 0){
+      var n = STATE.pendingBayarCount;
+      badge = '<span class="nav-badge">' + (n > 99 ? '99+' : n) + '</span>';
+    }
+    return '<button class="nav-item' + (STATE.tab === item.key ? ' active' : '') + '" onclick="switchTab(\'' + item.key + '\')">' +
+      '<span class="nav-icon-wrap">' + item.icon + badge + '</span><span>' + item.label + '</span>' +
+    '</button>';
+  }).join('');
+  qs('#bottomNav').innerHTML = html;
+}
+
+/* Hitung jumlah pembayaran berstatus "Menunggu" (SPP Diniyah + SPP Sekolah + Uang Makan)
+   lalu tampilkan sebagai badge angka di menu "Histori Bayar". Hanya untuk Admin. */
+function refreshBadgeHistoriAdmin(){
+  if (!STATE.user || STATE.user.level !== 'Admin') return;
+  var jenisList = ['sppsekolah', 'sppdiniyah', 'um'];
+  Promise.all(jenisList.map(function(j){
+    return apiCall('getHistoriPembayaranAdmin', { jenis: j, cari: '' }).then(function(res){
+      if (!res || !res.ok) return 0;
+      var data = res.data || [];
+      return data.filter(function(d){ return d.status !== 'terima' && d.status !== 'tolak'; }).length;
+    }).catch(function(){ return 0; });
+  })).then(function(counts){
+    STATE.pendingBayarCount = counts.reduce(function(a, b){ return a + b; }, 0);
+    var nav = navForRole(STATE.user.level);
+    if (qs('#bottomNav')) renderBottomNav(nav);
+  });
+}
+
+function switchTab(key){
+  STATE.tab = key;
+  // Hapus FAB tambah bayar kalau keluar dari tab historiadmin
+  if (key !== 'historiadmin'){
+    var oldFab = qs('#fabTambahBayar');
+    if (oldFab) oldFab.remove();
+  }
+  qsa('.nav-item').forEach(function(b){ b.classList.remove('active'); });
+  renderBottomNav(navForRole(STATE.user.level));
+  renderTab(key);
+}
+window.switchTab = switchTab;
+
+function confirmLogout(){
+  if (confirm('Keluar dari aplikasi?')) goLogout();
+}
+window.confirmLogout = confirmLogout;
+
+function setPageTitle(title, sub){
+  qs('#pageTitle').innerHTML = '<h2>' + escHtml(title) + '</h2>' + (sub ? '<p>' + escHtml(sub) + '</p>' : '');
+}
+
+function renderTab(key){
+  if (key === 'nilai') return viewNilai();
+  if (key === 'histori') return viewHistori();
+  if (key === 'profil') return viewProfil();
+  if (key === 'mapel') return viewMapelJadwal();
+  if (key === 'input') return viewLihatNilaiPilih();
+  if (key === 'historiadmin') return viewHistoriAdmin();
+}
+
+function skeletonRows(n){
+  var html = '';
+  for (var i=0;i<n;i++) html += '<div class="skeleton skel-row"></div>';
+  return html;
+}
+
+/* ================================ NILAI (SISWA) ============================ */
+function viewNilai(){
+  setPageTitle('Nilai Saya', 'Daftar nilai mata pelajaran semester ini');
+  var main = qs('#appMain');
+  main.innerHTML = '<div class="section-fade">' + skeletonRows(3) + '</div>';
+
+  apiCall('getNilai', { id_pengguna: STATE.user.id_pengguna }).then(function(res){
+    if (!res || !res.ok){
+      main.innerHTML = emptyState(iconBook(), 'Belum bisa memuat nilai', (res && res.msg) || 'Terjadi kesalahan saat mengambil data.');
+      return;
+    }
+    var data = res.data || [];
+    var watermarkHtml = '<div class="nilai-watermark"><img src="1222w.svg" alt="Logo Nilai"></div>';
+    if (!data.length){
+      main.innerHTML = watermarkHtml + emptyState(iconBook(), 'Belum ada nilai', 'Nilai mata pelajaran akan tampil di sini setelah guru menginput.');
+      return;
+    }
+    var html = '<div class="section-fade">' + watermarkHtml;
+    data.forEach(function(d){
+      var cls = scorePillClass(d.nilai_akhir);
+      var pillText = (d.nilai_akhir === null || d.nilai_akhir === '' || d.nilai_akhir === undefined) ? 'Belum dinilai' : Number(d.nilai_akhir).toFixed(0);
+      html += '<div class="row-item">' +
+        '<div class="row-item-top">' +
+          '<div>' +
+            '<div class="row-item-title">' + escHtml(d.nama_mapel) + '</div>' +
+            '<div class="row-item-meta">Kelas ' + escHtml(d.kelas) + ' &middot; ' + escHtml(d.nama_guru) + '</div>' +
+          '</div>' +
+          '<div class="score-pill ' + cls + '">' + pillText + '</div>' +
+        '</div>' +
+        (d.catatan ? '<div class="row-item-foot"><span>' + escHtml(d.catatan) + '</span></div>' : '') +
+      '</div>';
+    });
+    html += '</div>';
+    main.innerHTML = html;
+  }).catch(function(){
+    main.innerHTML = emptyState(iconBook(), 'Gagal memuat', 'Periksa koneksi internet atau URL server di halaman Profil.');
+  });
+}
+
+/* ============================ HISTORI PEMBAYARAN (SISWA) =================== */
+var JENIS_LABEL = { sppsekolah: 'SPP Sekolah', sppdiniyah: 'SPP Diniyah', um: 'Uang Makan' };
+
+function viewHistori(){
+  setPageTitle('Histori Pembayaran', 'Riwayat pembayaran SPP dan uang makan');
+  var main = qs('#appMain');
+  main.innerHTML =
+    '<div class="seg" id="histSeg">' +
+      ['sppsekolah','sppdiniyah','um'].map(function(j){
+        return '<button class="' + (STATE.histJenis === j ? 'active' : '') + '" onclick="switchHistJenis(\'' + j + '\')">' + JENIS_LABEL[j] + '</button>';
+      }).join('') +
+    '</div>' +
+    '<div id="histContent" class="section-fade">' + skeletonRows(3) + '</div>';
+
+  loadHistori();
+}
+
+function switchHistJenis(j){
+  STATE.histJenis = j;
+  qsa('#histSeg button').forEach(function(b, i){
+    var keys = ['sppsekolah','sppdiniyah','um'];
+    b.classList.toggle('active', keys[i] === j);
+  });
+  loadHistori();
+}
+window.switchHistJenis = switchHistJenis;
+
+function loadHistori(){
+  var box = qs('#histContent');
+  box.innerHTML = skeletonRows(3);
+  apiCall('getHistoriPembayaran', { id_pengguna: STATE.user.id_pengguna, jenis: STATE.histJenis }).then(function(res){
+    if (!res || !res.ok){
+      box.innerHTML = emptyState(iconWallet(), 'Belum bisa memuat data', (res && res.msg) || 'Terjadi kesalahan.');
+      return;
+    }
+    var data = res.data || [];
+    var totalDiterima = Number(res.total_diterima) || 0;
+    var html = (data.length && totalDiterima > 0)
+      ? '<div class="summary-strip"><span class="label">Total diterima</span><span class="amount">' + rupiah(totalDiterima) + '</span></div>'
+      : '';
+    if (!data.length){
+      html += emptyState(iconWallet(), 'Belum ada riwayat', 'Riwayat pembayaran ' + JENIS_LABEL[STATE.histJenis] + ' akan tampil di sini.');
+      box.innerHTML = html;
+      return;
+    }
+    data.forEach(function(d){
+      var st = statusInfo(d.status);
+      var petugasName = d.petugas || '';
+      var petugasFotoHtml = (petugasName.trim().toLowerCase() === 'sri ngatoyah')
+        ? '<img class="petugas-foto" src="eerefsfx332.svg" alt="Foto ' + escHtml(petugasName) + '">'
+        : '';
+      html += '<div class="row-item">' +
+        '<div class="row-item-top">' +
+          '<div>' +
+            '<div class="row-item-title">' + rupiah(d.nominal) + '</div>' +
+            '<div class="row-item-meta">' + escHtml(d.keterangan || JENIS_LABEL[STATE.histJenis]) + '</div>' +
+          '</div>' +
+          '<span class="badge ' + st.cls + '">' + st.label + '</span>' +
+        '</div>' +
+        '<div class="row-item-foot">' +
+          '<span>Dibayar ' + tanggalID(d.tanggal_bayar) + '</span>' +
+          '<span style="display:flex; align-items:center; gap:6px;">' + petugasFotoHtml + 'Oleh ' + escHtml(petugasName) + '</span>' +
+        '</div>' +
+      '</div>';
+    });
+    box.innerHTML = html;
+  }).catch(function(){
+    box.innerHTML = emptyState(iconWallet(), 'Gagal memuat', 'Periksa koneksi internet atau URL server di halaman Profil.');
+  });
+}
+
+/* ============================ HISTORI PEMBAYARAN (ADMIN) ==================== */
+function viewHistoriAdmin(){
+  setPageTitle('Histori Pembayaran', 'Riwayat pembayaran SPP & uang makan semua santri');
+  var main = qs('#appMain');
+
+  // Hapus FAB lama jika pernah dibuat sebelumnya
+  var oldFab = qs('#fabTambahBayar');
+  if (oldFab) oldFab.remove();
+
+  if (!STATE.adminHistJenis) STATE.adminHistJenis = 'sppsekolah';
+  if (!STATE.adminHistCari)  STATE.adminHistCari  = '';
+  if (!STATE.adminHistBulan) STATE.adminHistBulan = currentMonthKey();
+
+  var bulanOpts = bulanOptionsTerakhir(12);
+  var bulanOptHtml = '<option value="semua"' + (STATE.adminHistBulan === 'semua' ? ' selected' : '') + '>Semua Bulan</option>' +
+    bulanOpts.map(function(b){
+      return '<option value="' + b.key + '"' + (b.key === STATE.adminHistBulan ? ' selected' : '') + '>' + b.label + '</option>';
+    }).join('');
+
+  main.innerHTML =
+    '<div class="section-fade">' +
+      '<div class="seg" id="adminHistSeg">' +
+        ['sppsekolah','sppdiniyah','um'].map(function(j){
+          return '<button class="' + (STATE.adminHistJenis === j ? 'active' : '') + '" onclick="adminSwitchJenis(\'' + j + '\')">' + JENIS_LABEL[j] + '</button>';
+        }).join('') +
+      '</div>' +
+      '<div style="display:flex; gap:8px; margin-bottom:10px;">' +
+        '<select id="adminHistBulan" onchange="adminFilterBulan(this.value)" style="flex:0 0 132px; padding:10px 8px; border:1.5px solid var(--border); border-radius:var(--radius-sm); font-size:13px; background:var(--surface); outline:none;">' +
+          bulanOptHtml +
+        '</select>' +
+        '<input type="text" id="adminHistCari" placeholder="Cari nama / NIS santri..." value="' + escHtml(STATE.adminHistCari) + '" oninput="adminCariBayar(this.value)" style="flex:1; min-width:0; padding:10px 13px; border:1.5px solid var(--border); border-radius:var(--radius-sm); font-size:14px; background:var(--surface); outline:none; box-sizing:border-box;" onfocus="this.style.borderColor=\'var(--primary)\'" onblur="this.style.borderColor=\'var(--border)\'">' +
+      '</div>' +
+      '<div id="adminHistContent">' + skeletonRows(4) + '</div>' +
+    '</div>';
+
+  // FAB Tambah Pembayaran — menggantikan tombol besar full-width
+  var fab = document.createElement('button');
+  fab.id = 'fabTambahBayar';
+  fab.className = 'fab-tambah';
+  fab.title = 'Tambah Pembayaran';
+  fab.innerHTML = iconPlus();
+  fab.onclick = function(){ bukaModalTambahBayar(); };
+  document.body.appendChild(fab);
+
+  loadHistoriAdmin();
+}
+
+function adminSwitchJenis(j){
+  STATE.adminHistJenis = j;
+  qsa('#adminHistSeg button').forEach(function(b, i){
+    var keys = ['sppsekolah','sppdiniyah','um'];
+    b.classList.toggle('active', keys[i] === j);
+  });
+  STATE.adminHistCari = '';
+  var inp = qs('#adminHistCari');
+  if (inp) inp.value = '';
+  loadHistoriAdmin();
+}
+window.adminSwitchJenis = adminSwitchJenis;
+
+function adminCariBayar(val){
+  STATE.adminHistCari = val;
+  if (STATE._adminCariTimer) clearTimeout(STATE._adminCariTimer);
+  STATE._adminCariTimer = setTimeout(function(){ loadHistoriAdmin(); }, 380);
+}
+window.adminCariBayar = adminCariBayar;
+
+function adminFilterBulan(val){
+  STATE.adminHistBulan = val;
+  loadHistoriAdmin();
+}
+window.adminFilterBulan = adminFilterBulan;
+
+function loadHistoriAdmin(){
+  var box = qs('#adminHistContent');
+  if (!box) return;
+  box.innerHTML = skeletonRows(4);
+  apiCall('getHistoriPembayaranAdmin', {
+    jenis  : STATE.adminHistJenis,
+    cari   : STATE.adminHistCari || ''
+  }).then(function(res){
+    if (!res || !res.ok){
+      box.innerHTML = emptyState(iconWallet(), 'Belum bisa memuat data', (res && res.msg) || 'Terjadi kesalahan.');
+      return;
+    }
+    var dataAll = res.data || [];
+
+    // ── Cache unique siswa dari SELURUH response (sebelum difilter bulan) ──
+    // agar daftar siswa di modal "Tambah Pembayaran" tidak ikut menyusut
+    // hanya karena bulan yang sedang dilihat tidak punya transaksi.
+    if (!STATE.cache.siswaDariHistori) STATE.cache.siswaDariHistori = {};
+    var seenId = {};
+    dataAll.forEach(function(d){
+      var id = Number(d.id_pengguna);
+      if (id && d.nama_siswa && d.nama_siswa !== '-') {
+        seenId[id] = { id_pengguna: id, nama: d.nama_siswa, nis: d.nis || '-', kelas: d.kelas || '-' };
+      }
+    });
+    // Gabungkan ke cache global
+    if (!STATE.cache.daftarSiswa) STATE.cache.daftarSiswa = {};
+    Object.keys(seenId).forEach(function(k){ STATE.cache.daftarSiswa[k] = seenId[k]; });
+
+    // Refresh badge notifikasi "menunggu" di menu, berdasarkan data lengkap
+    refreshBadgeHistoriAdmin();
+
+    // ── Filter berdasarkan bulan terpilih (client-side) ──
+    var bulanFilter = STATE.adminHistBulan || 'semua';
+    var data = (bulanFilter === 'semua')
+      ? dataAll
+      : dataAll.filter(function(d){ return monthKeyFromTanggal(d.tanggal_bayar) === bulanFilter; });
+
+    var totalDiterima = data.reduce(function(sum, d){
+      return sum + (d.status === 'terima' ? (Number(d.nominal) || 0) : 0);
+    }, 0);
+
+    var jenisLabel = JENIS_LABEL[STATE.adminHistJenis];
+    var bulanLabel = bulanFilter === 'semua' ? '' : (' &middot; ' + bulanLabelFromKey(bulanFilter));
+    var html = '';
+
+    // Summary strip total
+    if (totalDiterima > 0){
+      html += '<div class="summary-strip"><span class="label">Total ' + jenisLabel + ' diterima' + bulanLabel + '</span><span class="amount">' + rupiah(totalDiterima) + '</span></div>';
+    }
+
+    if (!data.length){
+      html += emptyState(iconWallet(), 'Belum ada data', 'Riwayat ' + jenisLabel + (bulanFilter === 'semua' ? '' : ' untuk ' + bulanLabelFromKey(bulanFilter)) + ' tidak ditemukan.');
+      box.innerHTML = html;
+      return;
+    }
+
+    data.forEach(function(d){
+      var st = statusInfo(d.status);
+      var petugasName = d.petugas || '-';
+      var siswaInfo   = d.nama_siswa ? ('<strong>' + escHtml(d.nama_siswa) + '</strong>' + (d.nis ? ' &middot; NIS ' + escHtml(d.nis) : '') + (d.kelas ? ' &middot; Kelas ' + escHtml(d.kelas) : '')) : '';
+
+      // Simpan data baris lengkap (termasuk _row, no_wa_ortu, dll) ke cache
+      // agar bisa dipakai saat tombol "Cetak Struk" diklik tanpa perlu
+      // menulis seluruh objek ke atribut onclick.
+      var strukKey = STATE.adminHistJenis + '_' + d._row;
+      if (!STATE.cache.strukRows) STATE.cache.strukRows = {};
+      STATE.cache.strukRows[strukKey] = d;
+
+      var sudahDiterima = (d.status === 'terima');
+      html += '<div class="row-item">' +
+        '<div class="row-item-top">' +
+          '<div style="flex:1; min-width:0;">' +
+            (siswaInfo ? '<div class="row-item-title" style="font-size:13.5px;">' + siswaInfo + '</div>' : '') +
+            '<div class="row-item-title" style="margin-top:2px;">' + rupiah(d.nominal) + '</div>' +
+            '<div class="row-item-meta">' + escHtml(d.keterangan || jenisLabel) + '</div>' +
+          '</div>' +
+          '<span class="badge ' + st.cls + '" style="flex:none;">' + st.label + '</span>' +
+        '</div>' +
+        '<div class="row-item-foot">' +
+          '<span>Dibayar ' + tanggalID(d.tanggal_bayar) + '</span>' +
+          '<span>Oleh ' + escHtml(petugasName) + '</span>' +
+        '</div>' +
+        '<div class="row-item-actions">' +
+          '<button class="btn btn-outline" onclick="bukaStruk(\'' + strukKey + '\', \'cetak\')">' +
+            iconPrinter() + ' ' + (sudahDiterima ? 'Cetak Ulang' : 'Cetak Struk') +
+          '</button>' +
+          '<button class="btn btn-outline" style="color:var(--success);border-color:var(--success);" onclick="bukaStruk(\'' + strukKey + '\', \'wa\')">' +
+            iconWA() + ' Kirim WA' +
+          '</button>' +
+        '</div>' +
+      '</div>';
+    });
+    box.innerHTML = html;
+  }).catch(function(){
+    box.innerHTML = emptyState(iconWallet(), 'Gagal memuat', 'Periksa koneksi internet atau URL server di halaman Profil.');
+  });
+}
+
+
+function viewMapelJadwal(){
+  setPageTitle('Mata Pelajaran & Jadwal', 'Daftar mapel yang Anda ampu beserta jadwal mengajar');
+  var main = qs('#appMain');
+  main.innerHTML = '<div class="section-fade">' + skeletonRows(3) + '</div>';
+
+  apiCall('getMapelGuru', { id_pengguna: STATE.user.id_pengguna, level: STATE.user.level }).then(function(res){
+    if (!res || !res.ok){
+      main.innerHTML = emptyState(iconCalendar(), 'Belum bisa memuat data', (res && res.msg) || 'Terjadi kesalahan.');
+      return;
+    }
+    var data = res.data || [];
+    STATE.cache.mapelGuru = data;
+    if (!data.length){
+      main.innerHTML = emptyState(iconCalendar(), 'Belum ada mata pelajaran', 'Mata pelajaran yang Anda ampu akan tampil di sini.');
+      return;
+    }
+    var html = '<div class="section-fade">';
+    data.forEach(function(m){
+      html += '<div class="mapel-card">' +
+        '<div class="mapel-top">' +
+          '<div class="mapel-name">' + escHtml(m.nama_mapel) + '</div>' +
+          '<span class="mapel-class">Kelas ' + escHtml(m.kelas) + '</span>' +
+        '</div>' +
+        '<div class="row-item-meta" style="margin-top:4px;">Diampu oleh ' + escHtml(m.nama_guru || '-') + '</div>' +
+        '<div class="mapel-meta">' +
+          '<span class="mapel-meta-item">' + iconCalendar() + escHtml(m.hari || '-') + '</span>' +
+          '<span class="mapel-meta-item">' + iconClock() + escHtml((m.jam_mulai||'-') + ' - ' + (m.jam_selesai||'-')) + '</span>' +
+          '<span class="mapel-meta-item">' + iconUsers() + escHtml(m.jumlah_siswa) + ' siswa</span>' +
+        '</div>' +
+        '<div class="mapel-actions">' +
+          '<button class="btn btn-outline btn-sm" style="flex:1;" onclick="bukaLihatNilaiMapel(' + m.id_mapel + ')">' + iconBook() + ' Lihat Nilai</button>' +
+        '</div>' +
+      '</div>';
+    });
+    html += '</div>';
+    main.innerHTML = html;
+  }).catch(function(){
+    main.innerHTML = emptyState(iconCalendar(), 'Gagal memuat', 'Periksa koneksi internet atau URL server di halaman Profil.');
+  });
+}
+
+/* ======================== LIHAT NILAI (GURU/ADMIN — READ ONLY) ============== */
+// Sebelumnya disebut "Input Nilai" dan punya kotak input + tombol simpan.
+// Aplikasi ini sekarang murni MENAMPILKAN data dari SQL (lewat snapshot
+// Drive); guru/admin tidak lagi bisa mengubah nilai dari sini. Perubahan
+// nilai harus dilakukan langsung di MySQL/panel admin, lalu disinkronkan
+// ulang ke Drive. Karena itu seluruh tabel di bawah ini read-only, dan
+// fungsi simpanNilaiBatch() (beserta action 'simpan_nilai_batch' di
+// Code.gs) sudah dihapus/dinonaktifkan.
+function viewLihatNilaiPilih(){
+  setPageTitle('Lihat Nilai', 'Pilih mata pelajaran untuk melihat nilai siswa');
+  var main = qs('#appMain');
+
+  var cached = STATE.cache.mapelGuru;
+  function renderPicker(data){
+    if (!data || !data.length){
+      main.innerHTML = emptyState(iconBook(), 'Belum ada mata pelajaran', 'Anda belum memiliki mata pelajaran untuk ditampilkan nilainya.');
+      return;
+    }
+    var html = '<div class="section-fade">';
+    data.forEach(function(m){
+      html += '<div class="mapel-card" style="cursor:pointer;" onclick="bukaLihatNilaiMapel(' + m.id_mapel + ')">' +
+        '<div class="mapel-top">' +
+          '<div class="mapel-name">' + escHtml(m.nama_mapel) + '</div>' +
+          '<span class="mapel-class">Kelas ' + escHtml(m.kelas) + '</span>' +
+        '</div>' +
+        '<div class="row-item-meta" style="margin-top:4px;">Diampu oleh ' + escHtml(m.nama_guru || '-') + '</div>' +
+        '<div class="mapel-meta"><span class="mapel-meta-item">' + iconUsers() + escHtml(m.jumlah_siswa) + ' siswa</span></div>' +
+      '</div>';
+    });
+    html += '</div>';
+    main.innerHTML = html;
+  }
+
+  if (cached){
+    renderPicker(cached);
+  } else {
+    main.innerHTML = '<div class="section-fade">' + skeletonRows(3) + '</div>';
+    apiCall('getMapelGuru', { id_pengguna: STATE.user.id_pengguna, level: STATE.user.level }).then(function(res){
+      var data = (res && res.ok) ? (res.data||[]) : [];
+      STATE.cache.mapelGuru = data;
+      renderPicker(data);
+    }).catch(function(){
+      main.innerHTML = emptyState(iconBook(), 'Gagal memuat', 'Periksa koneksi internet atau URL server di halaman Profil.');
+    });
+  }
+}
+
+function bukaLihatNilaiMapel(idMapel){
+  STATE.tab = 'input';
+  renderBottomNav(navForRole(STATE.user.level));
+  setPageTitle('Lihat Nilai', 'Memuat daftar siswa...');
+  var main = qs('#appMain');
+  main.innerHTML = '<div class="section-fade">' + skeletonRows(4) + '</div>';
+
+  apiCall('getSiswaUntukNilai', { id_pengguna: STATE.user.id_pengguna, id_mapel: idMapel }).then(function(res){
+    if (!res || !res.ok){
+      main.innerHTML = emptyState(iconBook(), 'Belum bisa memuat data', (res && res.msg) || 'Terjadi kesalahan.');
+      return;
+    }
+    var mapel = res.mapel || {};
+    var data = res.data || [];
+    setPageTitle('Lihat Nilai', mapel.nama_mapel + ' \u2014 Kelas ' + mapel.kelas);
+
+    if (!data.length){
+      main.innerHTML =
+        '<button class="btn btn-outline btn-sm" style="margin-bottom:12px;" onclick="switchTab(\'input\')">&larr; Pilih mapel lain</button>' +
+        emptyState(iconUsers(), 'Belum ada siswa di kelas ini', 'Tidak ada siswa terdaftar pada kelas ' + escHtml(mapel.kelas) + '.');
+      return;
+    }
+
+    var rows = data.map(function(s, i){
+      var nilaiHtml = (s.nilai_akhir === null || s.nilai_akhir === '' || s.nilai_akhir === undefined)
+        ? '<span style="color:var(--ink-faint);">Belum dinilai</span>'
+        : '<strong>' + escHtml(Number(s.nilai_akhir).toFixed(0)) + '</strong>';
+      var catatanHtml = s.catatan ? escHtml(s.catatan) : '<span style="color:var(--ink-faint);">-</span>';
+      return '<tr>' +
+        '<td>' + (i+1) + '</td>' +
+        '<td>' + escHtml(s.nama) + '<br><span style="font-size:11.5px;color:var(--ink-faint);">NIS ' + escHtml(s.nis||'-') + '</span></td>' +
+        '<td>' + nilaiHtml + '</td>' +
+        '<td>' + catatanHtml + '</td>' +
+      '</tr>';
+    }).join('');
+
+    main.innerHTML =
+      '<div class="section-fade">' +
+        '<button class="btn btn-outline btn-sm" style="margin-bottom:12px;" onclick="switchTab(\'input\')">&larr; Pilih mapel lain</button>' +
+        '<div class="nilai-table-wrap">' +
+          '<table class="nilai-table">' +
+            '<thead><tr><th>No</th><th>Siswa</th><th>Nilai</th><th>Catatan</th></tr></thead>' +
+            '<tbody>' + rows + '</tbody>' +
+          '</table>' +
+        '</div>' +
+      '</div>';
+  }).catch(function(){
+    main.innerHTML = emptyState(iconBook(), 'Gagal memuat', 'Periksa koneksi internet atau URL server di halaman Profil.');
+  });
+}
+window.bukaLihatNilaiMapel = bukaLihatNilaiMapel;
+
+/* =================================== PROFIL ================================= */
+function detailRow(label, value){
+  var has = value !== null && value !== undefined && String(value).trim() !== '';
+  return '<div class="detail-row"><span class="k">' + escHtml(label) + '</span><span class="v' + (has?'':' empty') + '">' + (has ? escHtml(value) : 'Belum diisi') + '</span></div>';
+}
+function fmtTglLahir(v){
+  if (!v) return '';
+  var d = new Date(v);
+  if (isNaN(d.getTime())) return v;
+  return d.getDate() + '/' + (d.getMonth()+1) + '/' + d.getFullYear();
+}
+function fmtWa(v){ return v ? '+62 ' + v : ''; }
+function fmtMemberSince(v){
+  if (!v) return '';
+  var d = new Date(v);
+  if (isNaN(d.getTime())) return String(v);
+  var mm = String(d.getMonth()+1).padStart(2,'0');
+  var dd = String(d.getDate()).padStart(2,'0');
+  return d.getFullYear() + '-' + mm + '-' + dd;
+}
+
+function viewProfil(){
+  setPageTitle('Profil', 'Detail data diri dan pengaturan akun');
+  var u = STATE.user;
+  var main = qs('#appMain');
+
+  var photoHtml = '<div class="profile-photo">' + escHtml(initials(u.nama)) + '</div>';
+  var bodyHtml = '';
+
+  if (u.level === 'Siswa' && u.siswa){
+    var s = u.siswa;
+    bodyHtml =
+      '<div class="profile-name">' + escHtml(u.nama) + '</div>' +
+      '<div class="profile-sub">NIS ' + escHtml(s.nis || '-') + ' &middot; Kelas ' + escHtml(s.kelas || '-') + '</div>' +
+      '<span class="profile-badge">Santri</span>' +
+      '<div class="detail-list">' +
+        detailRow('NIS', s.nis) +
+        detailRow('Member since', s.angkatan ? fmtMemberSince(s.angkatan) : '') +
+        detailRow('WA Orang Tua', fmtWa(s.no_wa_ortu)) +
+        detailRow('WA Siswa', fmtWa(s.no_wa_siswa)) +
+        detailRow('Nama Ayah', s.nama_ayah) +
+        detailRow('Nama Ibu', s.nama_ibu) +
+        detailRow('Jenis Kelamin', s.jenis_kelamin) +
+        detailRow('Status Siswa', s.status_siswa) +
+      '</div>';
+  } else if (u.guru){
+    var g = u.guru;
+    bodyHtml =
+      '<div class="profile-name">' + escHtml(u.nama) + '</div>' +
+      '<div class="profile-sub">NIP ' + escHtml(g.nip || '-') + '</div>' +
+      '<span class="profile-badge">' + escHtml(roleLabel(u.level)) + '</span>' +
+      '<div class="detail-list">' +
+        detailRow('Jabatan', g.jabatan) +
+        detailRow('Unit Kerja', g.unit_kerja) +
+        detailRow('No. WA', fmtWa(g.no_wa)) +
+        detailRow('Alamat', g.alamat) +
+        detailRow('Tanggal Lahir', fmtTglLahir(g.tanggal_lahir)) +
+        detailRow('Jenis Kelamin', g.jenis_kelamin) +
+        detailRow('Status Kepegawaian', g.status_kepegawaian) +
+        detailRow('Tanggal Mulai Kerja', fmtTglLahir(g.tanggal_mulai_kerja)) +
+      '</div>';
+  } else {
+    var roleSub = u.username || u.level;
+    var diagnosisMsg = (u.level === 'Siswa')
+      ? 'Data profil siswa belum tersinkron dari server. Login ulang setelah admin menjalankan sinkronisasi, atau hubungi admin.'
+      : 'Data profil belum tersinkron dari server. Login ulang setelah admin menjalankan sinkronisasi, atau hubungi admin.';
+    bodyHtml =
+      '<div class="profile-name">' + escHtml(u.nama) + '</div>' +
+      '<div class="profile-sub">' + escHtml(roleSub) + '</div>' +
+      '<span class="profile-badge">' + escHtml(roleLabel(u.level)) + '</span>' +
+      '<div class="detail-list">' + detailRow('Data profil lengkap', '') + '</div>' +
+      '<div class="field-hint" style="text-align:left; margin-top:10px;">' + escHtml(diagnosisMsg) + '</div>';
+  }
+
+  var savedUrl = getGasUrl();
+
+  main.innerHTML =
+    '<div class="section-fade">' +
+      '<div class="card profile-card" style="position:relative;">' +
+        '<button class="icon-btn" id="btnProfilSettings" title="Pengaturan Koneksi" ' +
+          'style="position:absolute; top:14px; right:14px; background:var(--surface-2); border:1px solid var(--border); color:var(--ink-soft);" ' +
+          'onclick="toggleProfilSettings()">' + iconGearLg() + '</button>' +
+        photoHtml + bodyHtml +
+      '</div>' +
+
+      '<div id="profilSettingsPanel" style="display:none;">' +
+        '<div class="divider-label">Pengaturan Koneksi</div>' +
+        '<div class="card">' +
+          '<div class="card-head"><h3>URL Web App Google Apps Script</h3></div>' +
+          '<div class="field">' +
+            '<input type="text" id="inpGasUrlProfil" placeholder="https://script.google.com/macros/s/.../exec" value="' + escHtml(savedUrl) + '">' +
+            '<div class="field-hint">URL ini menghubungkan aplikasi ke Google Sheet tempat data nilai dan pembayaran disimpan (lihat Code.gs).</div>' +
+          '</div>' +
+          '<div style="display:flex; gap:8px;">' +
+            '<button class="btn btn-outline btn-sm" style="flex:1;" onclick="testGasFromProfil()">Tes Koneksi</button>' +
+            '<button class="btn btn-primary btn-sm" style="flex:1;" onclick="saveGasFromProfil()">Simpan URL</button>' +
+          '</div>' +
+          '<div id="profilServerStatus"></div>' +
+        '</div>' +
+      '</div>' +
+
+      '<button class="btn btn-danger-ghost btn-block" style="margin-top:6px;" onclick="confirmLogout()">' + iconLogout() + ' Keluar dari Aplikasi</button>' +
+    '</div>';
+}
+
+function toggleProfilSettings(){
+  var panel = qs('#profilSettingsPanel');
+  if (!panel) return;
+  var isHidden = panel.style.display === 'none';
+  panel.style.display = isHidden ? '' : 'none';
+  if (isHidden) panel.scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+window.toggleProfilSettings = toggleProfilSettings;
+
+function saveGasFromProfil(){
+  var v = qs('#inpGasUrlProfil').value.trim();
+  if (!v){ toast('URL belum diisi.', 'error'); return; }
+  setGasUrl(v);
+  toast('URL server berhasil disimpan.', 'success');
+}
+window.saveGasFromProfil = saveGasFromProfil;
+
+function testGasFromProfil(){
+  var v = qs('#inpGasUrlProfil').value.trim();
+  if (!v){ toast('URL belum diisi.', 'error'); return; }
+  setGasUrl(v);
+  var box = qs('#profilServerStatus');
+  box.innerHTML = '<div class="server-status"><span class="dot"></span> Menguji koneksi...</div>';
+  apiCall('ping', {}).then(function(res){
+    if (res && res.ok){
+      box.innerHTML = '<div class="server-status"><span class="dot ok"></span> Terhubung ke server</div>';
+    } else {
+      box.innerHTML = '<div class="server-status"><span class="dot bad"></span> Server merespons tapi gagal</div>';
+    }
+  }).catch(function(){
+    box.innerHTML = '<div class="server-status"><span class="dot bad"></span> Tidak dapat terhubung</div>';
+  });
+}
+window.testGasFromProfil = testGasFromProfil;
+
+/* ================================ EMPTY STATE ================================ */
+function emptyState(icon, title, sub){
+  return '<div class="empty-state section-fade">' + icon + '<div class="t">' + escHtml(title) + '</div><div class="s">' + escHtml(sub) + '</div></div>';
+}
+
+/* =================================== ICONS =================================== */
+function iconMosque(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V11a7 7 0 0 1 14 0v10M9 21v-6a3 3 0 0 1 6 0v6M12 4V2"/></svg>'; }
+function iconGear(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>'; }
+function iconGearLg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>'; }
+function iconBook(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>'; }
+function iconWallet(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5h-5a2 2 0 0 1 0-4h5z"/></svg>'; }
+function iconUser(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>'; }
+function iconCalendar(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M16 2.5v4M8 2.5v4M3 9.5h18"/></svg>'; }
+function iconPencil(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>'; }
+function iconLogout(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>'; }
+function iconClock(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>'; }
+function iconUsers(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.3 3-5.7 6.5-5.7s6.5 2.4 6.5 5.7"/><path d="M16 8.2a3 3 0 1 1 1.3 5.7"/><path d="M21.5 19.5c-.1-2.6-1.9-4.6-4.3-5.4"/></svg>'; }
+function iconCheck(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" style="vertical-align:-3px;"><path d="M20 6 9 17l-5-5"/></svg>'; }
+
+function iconPlus(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>'; }
+function iconPrinter(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="15" height="15" style="vertical-align:-3px;"><path d="M6 9V3h12v6"/><rect x="4" y="9" width="16" height="8" rx="1.5"/><path d="M6 17v4h12v-4"/><circle cx="17.5" cy="12.5" r=".6" fill="currentColor" stroke="none"/></svg>'; }
+function iconWhatsapp(){ return '<svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15" style="vertical-align:-3px;"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.79.47 3.47 1.36 4.95L2 22l5.29-1.39a9.9 9.9 0 0 0 4.75 1.21h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2zm5.8 14.02c-.24.68-1.41 1.3-1.94 1.34-.5.05-1.02.24-3.45-.72-2.91-1.16-4.78-4.07-4.93-4.27-.14-.2-1.18-1.57-1.18-3 0-1.42.75-2.12 1.02-2.41.27-.29.59-.36.79-.36.2 0 .39.002.56.01.18.008.42-.07.66.5.25.59.84 2.05.91 2.2.07.15.12.33.02.53-.1.2-.15.32-.3.49-.15.17-.3.38-.43.51-.14.13-.29.28-.13.56.16.28.74 1.22 1.59 1.98 1.1.98 2.02 1.28 2.32 1.42.3.14.47.12.65-.07.18-.2.74-.86.94-1.16.2-.3.4-.25.66-.15.27.1 1.71.81 2 .96.29.15.49.22.56.35.07.13.07.74-.17 1.42z"/></svg>'; }
+function iconWA(){ return iconWhatsapp(); }
+
+/* ====================== MODAL TAMBAH PEMBAYARAN (ADMIN) ===================== */
+
+/**
+ * Buka modal Tambah Pembayaran.
+ * Daftar santri diambil dari cache STATE.cache.daftarSiswa yang diisi
+ * saat loadHistoriAdmin() berjalan (tanpa perlu action get_daftar_siswa
+ * yang belum tentu ada di GAS lama). Jika cache masih kosong karena
+ * belum semua tab pernah dibuka, kita load histori semua jenis dulu
+ * untuk memperkaya cache, lalu render form.
+ */
+function bukaModalTambahBayar(){
+  if (!STATE.user || STATE.user.level !== 'Admin') return;
+
+  tutupModalTambahBayar();
+
+  var jenisAktif = STATE.adminHistJenis || 'sppsekolah';
+  var judulJenis = JENIS_LABEL[jenisAktif] || 'Pembayaran';
+
+  var overlay = document.createElement('div');
+  overlay.id = 'modalTambahBayar';
+  overlay.className = 'modal-overlay';
+  overlay.onclick = function(e){ if (e.target === overlay) tutupModalTambahBayar(); };
+
+  overlay.innerHTML =
+    '<div class="modal-sheet" onclick="event.stopPropagation()">' +
+      '<div class="modal-head">' +
+        '<h3>' + iconPlus() + ' Tambah ' + escHtml(judulJenis) + '</h3>' +
+        '<button class="modal-close" onclick="tutupModalTambahBayar()" title="Tutup">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" width="16" height="16"><path d="M18 6 6 18M6 6l12 12"/></svg>' +
+        '</button>' +
+      '</div>' +
+      '<div class="modal-body">' +
+        '<div id="modalTambahBayarBody"><div class="section-fade">' + skeletonRows(3) + '</div></div>' +
+      '</div>' +
+      '<div class="modal-footer">' +
+        '<button class="btn btn-outline" onclick="tutupModalTambahBayar()">Batal</button>' +
+        '<button class="btn btn-primary" id="btnSubmitTambahBayar" onclick="submitTambahBayar()" disabled>' +
+          iconCheck() + ' Simpan' +
+        '</button>' +
+      '</div>' +
+    '</div>';
+
+  document.body.appendChild(overlay);
+
+  // Siapkan daftar siswa dari cache (diisi tiap loadHistoriAdmin)
+  var cache = STATE.cache.daftarSiswa || {};
+  var siswaList = Object.keys(cache).map(function(k){ return cache[k]; });
+
+  if (siswaList.length > 0){
+    renderFormTambahBayar(siswaList, jenisAktif);
+  } else {
+    // Cache masih kosong — load semua 3 jenis histori untuk isi cache
+    var semua = ['sppsekolah','sppdiniyah','um'];
+    var promises = semua.map(function(j){
+      return apiCall('getHistoriPembayaranAdmin', { jenis: j, cari: '' }).then(function(res){
+        if (!res || !res.ok) return;
+        (res.data || []).forEach(function(d){
+          var id = Number(d.id_pengguna);
+          if (id && d.nama_siswa && d.nama_siswa !== '-'){
+            if (!STATE.cache.daftarSiswa) STATE.cache.daftarSiswa = {};
+            STATE.cache.daftarSiswa[id] = { id_pengguna: id, nama: d.nama_siswa, nis: d.nis || '-', kelas: d.kelas || '-' };
+          }
+        });
+      }).catch(function(){});
+    });
+
+    Promise.all(promises).then(function(){
+      var c = STATE.cache.daftarSiswa || {};
+      var list = Object.keys(c).map(function(k){ return c[k]; });
+      renderFormTambahBayar(list, jenisAktif);
+    });
+  }
+}
+window.bukaModalTambahBayar = bukaModalTambahBayar;
+
+/**
+ * Render isi form di dalam modal setelah daftar siswa siap.
+ * @param {Array} siswaList  - array { id_pengguna, nama, nis, kelas }
+ * @param {string} jenisAktif - 'sppsekolah' | 'sppdiniyah' | 'um'
+ */
+function renderFormTambahBayar(siswaList, jenisAktif){
+  var body = qs('#modalTambahBayarBody');
+  if (!body) return;
+
+  // Urutkan: per kelas lalu per nama
+  siswaList.sort(function(a,b){
+    var kc = String(a.kelas).localeCompare(String(b.kelas));
+    return kc !== 0 ? kc : String(a.nama).localeCompare(String(b.nama));
+  });
+
+  // Kelompokkan per kelas untuk optgroup
+  var kelasBucket = {};
+  siswaList.forEach(function(s){
+    var k = s.kelas || '-';
+    if (!kelasBucket[k]) kelasBucket[k] = [];
+    kelasBucket[k].push(s);
+  });
+
+  var optionHtml = '<option value="">-- Pilih Santri --</option>';
+  if (siswaList.length === 0){
+    optionHtml += '<option disabled>Data santri belum tersedia. Buka tab lain dulu.</option>';
+  } else {
+    Object.keys(kelasBucket).sort().forEach(function(k){
+      optionHtml += '<optgroup label="Kelas ' + escHtml(k) + '">';
+      kelasBucket[k].forEach(function(s){
+        optionHtml += '<option value="' + s.id_pengguna + '">' + escHtml(s.nama) + ' — NIS ' + escHtml(s.nis) + '</option>';
+      });
+      optionHtml += '</optgroup>';
+    });
+  }
+
+  // Nominal default per jenis
+  var NOMINAL_DEFAULT = { sppsekolah: 100000, sppdiniyah: 50000, um: 500000 };
+
+  body.innerHTML =
+    '<div id="modalFormErr" class="login-error" style="display:none;"></div>' +
+
+    '<div class="field">' +
+      '<label>Jenis Pembayaran</label>' +
+      '<select id="modalJenis" onchange="onModalJenisChange()">' +
+        ['sppsekolah','sppdiniyah','um'].map(function(j){
+          return '<option value="' + j + '"' + (j === jenisAktif ? ' selected' : '') + '>' + JENIS_LABEL[j] + '</option>';
+        }).join('') +
+      '</select>' +
+    '</div>' +
+
+    '<div class="field">' +
+      '<label>Santri</label>' +
+      '<select id="modalSiswaSelect" onchange="onModalSiswaChange()" size="1">' + optionHtml + '</select>' +
+    '</div>' +
+
+    '<div id="modalSiswaInfo" style="display:none; background:var(--primary-soft); border-radius:var(--radius-sm); padding:10px 13px; margin-bottom:14px; font-size:13px; color:var(--primary-dark); font-weight:600;"></div>' +
+
+    '<div class="field">' +
+      '<label>Nominal (Rp)</label>' +
+      '<input type="number" id="modalNominal" min="1" step="1000" value="' + (NOMINAL_DEFAULT[jenisAktif] || '') + '">' +
+    '</div>' +
+
+    '<div class="field">' +
+      '<label>Keterangan</label>' +
+      '<input type="text" id="modalKeterangan">' +
+    '</div>' +
+
+    '<div class="field">' +
+      '<label>Tanggal Bayar</label>' +
+      '<input type="date" id="modalTanggal" value="' + escHtml(todayDateValue()) + '" onchange="updateKeteranganOtomatis()">' +
+    '</div>' +
+
+    '<div class="field">' +
+      '<label>Status</label>' +
+      '<select id="modalStatus">' +
+        '<option value="" selected>— Menunggu —</option>' +
+        '<option value="terima">Diterima</option>' +
+        '<option value="tolak">Ditolak</option>' +
+      '</select>' +
+    '</div>';
+
+  var btnSubmit = qs('#btnSubmitTambahBayar');
+  if (btnSubmit) btnSubmit.disabled = false;
+
+  // Isi keterangan otomatis sesuai jenis + bulan/tahun tanggal saat ini
+  updateKeteranganOtomatis();
+}
+window.renderFormTambahBayar = renderFormTambahBayar;
+
+function tutupModalTambahBayar(){
+  var el = qs('#modalTambahBayar');
+  if (el) el.remove();
+}
+window.tutupModalTambahBayar = tutupModalTambahBayar;
+
+function todayDateValue(){
+  var d = new Date();
+  var mm = String(d.getMonth()+1).padStart(2,'0');
+  var dd = String(d.getDate()).padStart(2,'0');
+  return d.getFullYear() + '-' + mm + '-' + dd;
+}
+
+// Nama bulan Indonesia
+var BULAN_PANJANG = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+
+/**
+ * Generate keterangan otomatis berdasar jenis pembayaran + bulan/tahun tanggal.
+ * Contoh: "Pembayaran SPP Sekolah Juli 2025"
+ * Dipanggil saat modal dibuka, saat jenis ganti, atau saat tanggal ganti.
+ */
+function updateKeteranganOtomatis(){
+  var selJenis  = qs('#modalJenis');
+  var inpTgl    = qs('#modalTanggal');
+  var inpKet    = qs('#modalKeterangan');
+  if (!selJenis || !inpTgl || !inpKet) return;
+
+  var jenis = selJenis.value;
+  var label = JENIS_LABEL[jenis] || jenis;
+
+  // Ambil bulan & tahun dari input tanggal
+  var tglVal = inpTgl.value; // format yyyy-MM-dd
+  var bulan  = '';
+  var tahun  = '';
+  if (tglVal){
+    var parts = tglVal.split('-');
+    if (parts.length >= 2){
+      tahun  = parts[0];
+      bulan  = BULAN_PANJANG[parseInt(parts[1], 10) - 1] || '';
+    }
+  }
+
+  inpKet.value = 'Pembayaran ' + label + (bulan ? ' ' + bulan : '') + (tahun ? ' ' + tahun : '');
+}
+window.updateKeteranganOtomatis = updateKeteranganOtomatis;
+
+/**
+ * Saat jenis berubah: update nominal default & keterangan otomatis.
+ */
+function onModalJenisChange(){
+  var sel    = qs('#modalJenis');
+  var inpNom = qs('#modalNominal');
+  if (!sel || !inpNom) return;
+  var NOMINAL_DEFAULT = { sppsekolah: 100000, sppdiniyah: 50000, um: 500000 };
+  inpNom.value = NOMINAL_DEFAULT[sel.value] || '';
+  updateKeteranganOtomatis();
+}
+window.onModalJenisChange = onModalJenisChange;
+
+function onModalSiswaChange(){
+  var sel   = qs('#modalSiswaSelect');
+  var info  = qs('#modalSiswaInfo');
+  if (!sel || !info) return;
+  var idPengguna = Number(sel.value);
+  if (!idPengguna){ info.style.display = 'none'; return; }
+  var daftar = STATE.cache.daftarSiswa || {};
+  var s = daftar[idPengguna];
+  if (s){
+    info.style.display = '';
+    info.innerHTML = escHtml(s.nama) + ' · NIS ' + escHtml(s.nis) + ' · Kelas ' + escHtml(s.kelas);
+  } else {
+    info.style.display = 'none';
+  }
+}
+window.onModalSiswaChange = onModalSiswaChange;
+
+function setModalErr(msg){
+  var el = qs('#modalFormErr');
+  if (!el) return;
+  if (msg){ el.textContent = msg; el.style.display = 'block'; el.scrollIntoView({ behavior:'smooth', block:'nearest' }); }
+  else     { el.style.display = 'none'; }
+}
+
+/**
+ * Submit form tambah pembayaran ke GAS (action tambah_pembayaran).
+ * Otorisasi akhir tetap di GAS — sisi client hanya guard cepat.
+ */
+function submitTambahBayar(){
+  if (!STATE.user || STATE.user.level !== 'Admin'){ toast('Hanya Admin yang dapat menambahkan pembayaran.', 'error'); return; }
+
+  setModalErr('');
+
+  var jenis       = (qs('#modalJenis')        || {}).value || '';
+  var idSiswa     = Number((qs('#modalSiswaSelect') || {}).value || 0);
+  var nominal     = Number((qs('#modalNominal')     || {}).value || 0);
+  var keterangan  = ((qs('#modalKeterangan') || {}).value || '').trim();
+  var tanggal     = ((qs('#modalTanggal')    || {}).value || '').trim();
+  var statusRaw   = (qs('#modalStatus') || {}).value || '';
+  // '' = Menunggu (tidak dikirim ke GAS, biarkan GAS pakai default 'terima'
+  // atau set field status = 'pending' di DB — sesuaikan jika perlu)
+  var status = statusRaw || 'menunggu';
+
+  // Validasi sisi klien
+  if (!jenis)   { setModalErr('Pilih jenis pembayaran.'); return; }
+  if (!idSiswa) { setModalErr('Pilih santri terlebih dahulu.'); return; }
+  if (!nominal || nominal <= 0){ setModalErr('Nominal harus lebih dari 0.'); return; }
+
+  // Keterangan: pakai yang di field (sudah ter-generate otomatis)
+  if (!keterangan){
+    var labelJ = JENIS_LABEL[jenis] || jenis;
+    keterangan = 'Pembayaran ' + labelJ;
+  }
+
+  // Format tanggal → 'yyyy-MM-dd HH:mm:ss'
+  var tanggalFmt = tanggal ? tanggal + ' 00:00:00' : '';
+
+  var btn = qs('#btnSubmitTambahBayar');
+  if (btn){ btn.disabled = true; btn.textContent = 'Menyimpan...'; }
+
+  apiCall('tambahPembayaran', {
+    id_pengguna_admin : STATE.user.id_pengguna,
+    jenis             : jenis,
+    id_pengguna_siswa : idSiswa,
+    nominal           : nominal,
+    keterangan        : keterangan,
+    tanggal_bayar     : tanggalFmt || undefined,
+    status            : status,
+    petugas           : STATE.user.nama || STATE.user.username || 'Admin'
+  }).then(function(res){
+    if (btn){ btn.disabled = false; btn.innerHTML = iconCheck() + ' Simpan'; }
+    if (!res || !res.ok){
+      setModalErr((res && res.msg) || 'Gagal menyimpan. Coba lagi.');
+      return;
+    }
+    toast(res.msg || 'Pembayaran berhasil ditambahkan.', 'success');
+    tutupModalTambahBayar();
+    // Refresh tampilan histori agar entri baru langsung muncul
+    STATE.adminHistJenis = jenis;
+    loadHistoriAdmin();
+    // Pastikan tab segment juga ikut update
+    var segs = qsa('#adminHistSeg button');
+    var keys = ['sppsekolah','sppdiniyah','um'];
+    segs.forEach(function(b, i){ b.classList.toggle('active', keys[i] === jenis); });
+  }).catch(function(){
+    if (btn){ btn.disabled = false; btn.innerHTML = iconCheck() + ' Simpan'; }
+    setModalErr('Tidak dapat terhubung ke server. Periksa koneksi dan URL GAS.');
+  });
+}
+window.submitTambahBayar = submitTambahBayar;
+
+/* ====================== STRUK PEMBAYARAN — CETAK & KIRIM WA ================= */
+
+var PESANTREN_NAMA   = 'Pondok Pesantren Sabilul Muttaqin';
+var PESANTREN_ALAMAT = 'Dusun IV, SP. 2, Desa Simpang Tiga Abadi, Kec. Tulung Selapan, Kab. Ogan Komering Ilir, Sumatera Selatan, 30655';
+
+/* ── Generator token & nomor struk ── */
+function genRandStr(chars, len){
+  var r = '';
+  for(var i=0;i<len;i++) r += chars.charAt(Math.floor(Math.random()*chars.length));
+  return r;
+}
+function genTokenCetak(){
+  /* Format: SC-YYYYMMDD-XXXX  (SC = Sabilul Muttaqin Cetak) */
+  var now = new Date();
+  var tgl = now.getFullYear() +
+    String(now.getMonth()+1).padStart(2,'0') +
+    String(now.getDate()).padStart(2,'0');
+  return 'SC-' + tgl + '-' + genRandStr('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', 4);
+}
+function genTokenBayar(){
+  /* Format: TRX-XXXXXXXX  (8 karakter alphanumeric) */
+  return 'TRX-' + genRandStr('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', 4) +
+         '-' + genRandStr('0123456789', 4);
+}
+function genHashData(nama, nominal, tgl){
+  /* Pseudo-hash 8 karakter hex dari data pembayaran */
+  var raw = String(nama||'') + String(nominal||0) + String(tgl||'') + String(Math.random());
+  var h = 0;
+  for(var i=0;i<raw.length;i++){
+    h = ((h<<5)-h) + raw.charCodeAt(i);
+    h = h & h; // 32-bit
+  }
+  return (h >>> 0).toString(16).toUpperCase().padStart(8,'0');
+}
+function genNoStruk(jenis){
+  var prefix = { sppsekolah:'SPP', sppdiniyah:'DIN', um:'UM' }[jenis] || 'PMB';
+  var now = new Date();
+  var bln = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'][now.getMonth()];
+  var seq = genRandStr('0123456789',3);
+  return prefix + '/' + seq + '/' + bln + '/' + now.getFullYear();
+}
+function genTsCetak(){
+  var now = new Date();
+  return tanggalID(now.toISOString()) + ' ' +
+    String(now.getHours()).padStart(2,'0') + ':' +
+    String(now.getMinutes()).padStart(2,'0') + ':' +
+    String(now.getSeconds()).padStart(2,'0');
+}
+
+/**
+ * Rapikan nomor WA ke format internasional (62...) tanpa simbol,
+ * supaya bisa dipakai pada link wa.me/<nomor>.
+ */
+function waNumberClean(v){
+  var digits = String(v || '').replace(/[^0-9]/g, '');
+  if (!digits) return '';
+  if (digits.charAt(0) === '0') digits = '62' + digits.substring(1);
+  else if (digits.substring(0,2) !== '62') digits = '62' + digits;
+  return digits;
+}
+
+function tanggalJamID(str){
+  if (!str) return '-';
+  var d = new Date(str);
+  if (isNaN(d.getTime())) return String(str);
+  var jam = String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+  return tanggalID(str) + ' ' + jam;
+}
+
+/**
+ * Buka modal preview struk untuk satu baris histori pembayaran.
+ * @param {string} strukKey - kunci 'jenis_idxRow' pada STATE.cache.strukRows
+ */
+function bukaStruk(strukKey, mode){
+  if (!STATE.user || STATE.user.level !== 'Admin') return;
+  var d = (STATE.cache.strukRows || {})[strukKey];
+  if (!d){ toast('Data struk tidak ditemukan. Muat ulang daftar.', 'error'); return; }
+
+  // Jika mode='wa' dan status belum diterima, tetap perlu simpan dulu via konfirmasi
+  // mode: 'cetak' = hanya cetak/unduh PNG, 'wa' = kirim WA saja, undefined = tampil modal dengan dua tombol
+  tutupStruk();
+
+  var jenis = strukKey.split('_')[0];
+  var jenisLabel = JENIS_LABEL[jenis] || 'Pembayaran';
+  var sudahDiterima = (d.status === 'terima');
+  var nomorWa = waNumberClean(d.no_wa_ortu);
+
+  var overlay = document.createElement('div');
+  overlay.id = 'modalStruk';
+  overlay.className = 'modal-overlay';
+  overlay.onclick = function(e){ if (e.target === overlay) tutupStruk(); };
+
+  // Simpan mode yang dipilih ke dataset overlay supaya bisa dibaca oleh konfirmasiCetakStruk
+  overlay.dataset.strukMode = mode || 'cetak';
+
+  // Hint info di bawah struk
+  var infoHtml = nomorWa
+    ? '<div class="field-hint" style="margin-top:12px; text-align:center;">WA wali santri: <strong>+' + nomorWa + '</strong></div>'
+    : '<div class="login-error" style="display:block; margin-top:12px;">Nomor WA orang tua tidak tersedia. Pesan WA tidak bisa dikirim otomatis.</div>';
+
+  // Tombol footer: selalu tampil dua tombol aksi (Cetak & Kirim WA)
+  var btnCetak =
+    '<button class="btn btn-outline" id="btnCetakSaja" onclick="konfirmasiCetakStruk(\'' + strukKey + '\', \'cetak\')" style="display:flex;align-items:center;justify-content:center;gap:5px;">' +
+      iconPrinter() + ' ' + (sudahDiterima ? 'Cetak Ulang' : 'Cetak Struk') +
+    '</button>';
+  var btnWA =
+    '<button class="btn btn-primary" id="btnKirimWA" onclick="konfirmasiCetakStruk(\'' + strukKey + '\', \'wa\')" style="display:flex;align-items:center;justify-content:center;gap:5px;background:var(--success);"' +
+      (nomorWa ? '' : ' disabled title="Nomor WA tidak tersedia"') + '>' +
+      iconWA() + ' Kirim WA' +
+    '</button>';
+
+  /* Generate token & identitas struk sekali saat modal dibuka */
+  var tokenCetak = genTokenCetak();
+  var tokenBayar = genTokenBayar();
+  var hashData   = genHashData(d.nama_siswa, d.nominal, d.tanggal_bayar);
+  var noStruk    = genNoStruk(jenis);
+  var tsCetak    = genTsCetak();
+
+  overlay.innerHTML =
+    '<div class="modal-sheet" onclick="event.stopPropagation()">' +
+      '<div class="modal-head">' +
+        '<h3>' + iconPrinter() + ' Struk ' + escHtml(jenisLabel) + '</h3>' +
+        '<button class="modal-close" onclick="tutupStruk()" title="Tutup">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" width="16" height="16"><path d="M18 6 6 18M6 6l12 12"/></svg>' +
+        '</button>' +
+      '</div>' +
+      '<div class="modal-body">' +
+        '<div id="strukPrintArea" class="struk-card">' +
+
+          /* ── HEADER ── */
+          '<div class="sk-header">' +
+            '<div class="sk-logo">' +
+              '<img src="https://raw.githubusercontent.com/defadistiro/sabilulmuttaqin/main/anggota_1_1752596230.svg" alt="Logo" crossorigin="anonymous" onerror="this.style.display=\'none\'">' +
+            '</div>' +
+            '<div class="sk-header-text">' +
+              '<div class="sk-pp">Pondok Pesantren</div>' +
+              '<div class="sk-pesantren">Sabilul Muttaqin</div>' +
+              '<div class="sk-alamat">' + escHtml(PESANTREN_ALAMAT) + '</div>' +
+            '</div>' +
+            '<div class="sk-logo">' +
+              '<img src="https://raw.githubusercontent.com/defadistiro/sabilulmuttaqin/main/nuuu.svg" alt="Logo" crossorigin="anonymous" onerror="this.style.display=\'none\'">' +
+            '</div>' +
+          '</div>' +
+
+          /* ── GIGI PERFORASI ── */
+          '<div class="sk-perforated"><div class="sk-perf-line"></div></div>' +
+
+          /* ── JUDUL JENIS PEMBAYARAN ── */
+          '<div class="sk-judul-wrap">' +
+            '<div class="sk-judul">&#9632; STRUK PEMBAYARAN ' + escHtml(jenisLabel.toUpperCase()) + ' &#9632;</div>' +
+          '</div>' +
+
+          /* ── NO STRUK & TANGGAL ── */
+          '<div class="sk-meta">' +
+            '<span class="sk-nostruk">' + noStruk + '</span>' +
+            '<span class="sk-tanggal">&#128197; ' + escHtml(tanggalJamID(d.tanggal_bayar)) + '</span>' +
+          '</div>' +
+
+          /* ── TABEL DATA ── */
+          '<div class="sk-rows">' +
+            '<div class="sk-row"><span class="k">Nama Siswa</span><span class="v">' + escHtml(d.nama_siswa || '-') + '</span></div>' +
+            '<div class="sk-row"><span class="k">Petugas</span><span class="v">PPSM</span></div>' +
+            '<div class="sk-row sk-row-nominal"><span class="k">Nominal</span><span class="v">' + rupiah(d.nominal) + '</span></div>' +
+            '<div class="sk-row"><span class="k">Keterangan</span><span class="v">' + escHtml(d.keterangan || jenisLabel) + '</span></div>' +
+            '<div class="sk-row sk-row-status"><span class="k">Status</span><span class="v">&#10003; ' + (sudahDiterima ? 'Diterima' : 'Diterima (baru)') + '</span></div>' +
+          '</div>' +
+
+          /* ── BADGE LUNAS ── */
+          '<div class="sk-lunas-badge">' +
+            '<div class="sk-lunas-text">Pembayaran Diterima &amp; Sah</div>' +
+          '</div>' +
+
+          /* ── SECTION TOKEN ── */
+          '<div class="sk-token-section">' +
+            '<div class="sk-token-label">&#9679; Keamanan &amp; Verifikasi &#9679;</div>' +
+            '<div class="sk-token-row">' +
+              '<span class="sk-token-key">Token Cetak</span>' +
+              '<span class="sk-token-val">' + tokenCetak + '</span>' +
+            '</div>' +
+            '<div class="sk-token-row">' +
+              '<span class="sk-token-key">Kode Bayar</span>' +
+              '<span class="sk-token-val">' + tokenBayar + '</span>' +
+            '</div>' +
+            '<div class="sk-token-row">' +
+              '<span class="sk-token-key">Hash Data</span>' +
+              '<span class="sk-token-val">' + hashData + '</span>' +
+            '</div>' +
+          '</div>' +
+
+          /* ── FOOTER ── */
+          '<div class="sk-foot">' +
+            '<div class="sk-foot-main">Simpan struk ini sebagai bukti pembayaran resmi</div>' +
+            '<div class="sk-foot-ts">Dicetak: ' + tsCetak + ' &nbsp;|&nbsp; ' + noStruk + '</div>' +
+          '</div>' +
+
+        '</div>' +
+        infoHtml +
+      '</div>' +
+      '<div class="modal-footer">' +
+        '<button class="btn btn-ghost" onclick="tutupStruk()">Batal</button>' +
+        btnCetak +
+        btnWA +
+      '</div>' +
+    '</div>';
+
+  document.body.appendChild(overlay);
+}
+window.bukaStruk = bukaStruk;
+
+function tutupStruk(){
+  var el = qs('#modalStruk');
+  if (el) el.remove();
+  // Refresh list histori supaya badge status ter-update
+  loadHistoriAdmin();
+}
+window.tutupStruk = tutupStruk;
+
+/**
+ * Konfirmasi cetak: simpan status 'terima' ke GAS (jika belum diterima),
+ * lalu lanjut ke proses generate gambar struk (PNG) & kirim ke WA.
+ */
+function konfirmasiCetakStruk(strukKey, mode){
+  var d = (STATE.cache.strukRows || {})[strukKey];
+  if (!d){ toast('Data struk tidak ditemukan.', 'error'); return; }
+
+  var jenis = strukKey.split('_')[0];
+  var sudahDiterima = (d.status === 'terima');
+
+  // Ambil tombol sesuai mode
+  var btnCetak = qs('#btnCetakSaja');
+  var btnWA    = qs('#btnKirimWA');
+
+  function resetBtns(){
+    if (btnCetak){ btnCetak.disabled = false; btnCetak.innerHTML = iconPrinter() + ' ' + (sudahDiterima ? 'Cetak Ulang' : 'Cetak Struk'); }
+    if (btnWA)   { btnWA.disabled = false;    btnWA.innerHTML    = iconWA() + ' Kirim WA'; }
+  }
+
+  function lanjutkanProsesStruk(){
+    prosesGambarStruk(d, jenis, mode || 'cetak');
+  }
+
+  if (sudahDiterima){
+    // Status sudah diterima — tidak perlu update GAS, langsung proses
+    lanjutkanProsesStruk();
+    return;
+  }
+
+  // Belum diterima — perlu simpan status ke GAS terlebih dahulu
+  if (mode === 'wa'){
+    if (btnWA){ btnWA.disabled = true; btnWA.innerHTML = 'Menyimpan...'; }
+  } else {
+    if (btnCetak){ btnCetak.disabled = true; btnCetak.innerHTML = 'Menyimpan...'; }
+  }
+
+  apiCall('cetakStrukPembayaran', {
+    id_pengguna_admin : STATE.user.id_pengguna,
+    jenis             : jenis,
+    _row              : d._row,
+    id_pengguna       : d.id_pengguna,
+    nominal           : d.nominal,
+    tanggal_bayar     : d.tanggal_bayar
+  }).then(function(res){
+    if (!res || !res.ok){
+      resetBtns();
+      toast((res && res.msg) || 'Gagal memperbarui status di server.', 'error');
+      return;
+    }
+    d.status = 'terima';
+    refreshBadgeHistoriAdmin();
+    lanjutkanProsesStruk();
+  }).catch(function(){
+    resetBtns();
+    toast('Tidak dapat terhubung ke server. Periksa koneksi dan URL GAS.', 'error');
+  });
+}
+window.konfirmasiCetakStruk = konfirmasiCetakStruk;
+window.prosesGambarStruk = prosesGambarStruk;
+window.hanyaCetakStruk = hanyaCetakStruk;
+
+/**
+ * Ambil HANYA elemen #strukPrintArea (satu kartu struk yang sedang
+ * terbuka di modal) lalu render jadi gambar PNG dengan html2canvas.
+ * Pakai pendekatan ini (bukan window.print()) supaya yang ter-capture
+ * dipastikan hanya satu struk ini saja — tidak ikut menyeret data/baris
+ * lain yang ada di halaman histori.
+ */
+function prosesGambarStruk(d, jenis, mode){
+  var area = qs('#strukPrintArea');
+  var btnCetak = qs('#btnCetakSaja');
+  var btnWA    = qs('#btnKirimWA');
+  var sudahDiterima = (d.status === 'terima');
+
+  function resetBtns(){
+    if (btnCetak){ btnCetak.disabled = false; btnCetak.innerHTML = iconPrinter() + ' ' + (sudahDiterima ? 'Cetak Ulang' : 'Cetak Struk'); }
+    if (btnWA)   { btnWA.disabled = false;    btnWA.innerHTML    = iconWA() + ' Kirim WA'; }
+  }
+
+  if (!area || typeof html2canvas === 'undefined'){
+    toast('Gagal memuat komponen gambar struk. Periksa koneksi internet lalu coba lagi.', 'error');
+    resetBtns();
+    return;
+  }
+
+  if (mode === 'wa'){
+    if (btnWA){ btnWA.disabled = true; btnWA.innerHTML = 'Membuat gambar...'; }
+  } else {
+    if (btnCetak){ btnCetak.disabled = true; btnCetak.innerHTML = 'Membuat gambar...'; }
+  }
+
+  // Tunggu semua gambar di area struk selesai dimuat sebelum di-capture
+  var imgs = area.querySelectorAll('img');
+  var imgPromises = Array.prototype.map.call(imgs, function(img){
+    if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+    return new Promise(function(resolve){
+      img.onload = resolve;
+      img.onerror = resolve; // tetap lanjut meski logo gagal load
+    });
+  });
+
+  Promise.all(imgPromises).then(function(){
+    return html2canvas(area, {
+      scale: 3,
+      backgroundColor: '#ffffff',
+      useCORS: true,
+      allowTaint: false,
+      logging: false
+    });
+  }).then(function(canvas){
+    canvas.toBlob(function(blob){
+      resetBtns();
+      if (!blob){
+        toast('Gagal membuat gambar struk. Coba lagi.', 'error');
+        return;
+      }
+
+      var jenisLabel = JENIS_LABEL[jenis] || 'Pembayaran';
+      var namaFile = 'Struk_' + String(d.nama_siswa || 'Siswa').replace(/[^a-zA-Z0-9]+/g, '_') + '_' + jenisLabel.replace(/\s+/g, '') + '.png';
+      var fileStruk = new File([blob], namaFile, { type: 'image/png' });
+      var nomorWa = waNumberClean(d.no_wa_ortu);
+
+      if (mode === 'wa'){
+        // Hanya kirim WA (+ unduh gambar sebagai lampiran)
+        kirimStrukKeWA(fileStruk, d, jenisLabel, nomorWa);
+      } else {
+        // Hanya cetak/unduh PNG — tanpa buka WA
+        hanyaCetakStruk(fileStruk, jenisLabel);
+      }
+    }, 'image/png');
+  }).catch(function(){
+    resetBtns();
+    toast('Gagal membuat gambar struk. Coba lagi.', 'error');
+  });
+}
+
+/**
+ * Hanya cetak (unduh) PNG struk — tanpa kirim WA.
+ */
+function hanyaCetakStruk(fileStruk, jenisLabel){
+  var url = URL.createObjectURL(fileStruk);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = fileStruk.name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+  toast('Gambar struk berhasil diunduh.', 'success');
+  // Modal tetap terbuka — admin bisa langsung klik Kirim WA setelahnya
+}
+
+/**
+ * 1) Coba Web Share API dengan file gambar (di browser/HP yang mendukung,
+ *    ini langsung menampilkan pilihan share — termasuk WhatsApp — dengan
+ *    gambar struk SUDAH terlampir, tanpa perlu cetak/simpan manual dulu).
+ * 2) Jika tidak didukung (umum terjadi pada WebView APK polos), gambar
+ *    otomatis diunduh ke perangkat DAN chat WA nomor wali santri otomatis
+ *    dibuka — admin tinggal lampirkan gambar yang sudah tersimpan tadi.
+ *
+ * CATATAN PENTING: WhatsApp (versi konsumer biasa) tidak menyediakan cara
+ * resmi bagi website untuk membuka chat ke SATU nomor tertentu sambil
+ * gambar SUDAH otomatis terlampir di kolom chat — kombinasi "nomor spesifik
+ * + gambar terlampir otomatis" itu hanya bisa lewat WhatsApp Business
+ * Cloud API (berbayar, butuh server) atau lewat Android Intent native
+ * (kalau app ini dibungkus WebView/APK dengan jembatan kode native).
+ * Jadi flow di bawah ini adalah yang paling dekat & otomatis yang bisa
+ * dicapai langsung dari halaman web/PWA.
+ */
+function kirimStrukKeWA(fileStruk, d, jenisLabel, nomorWa){
+  var pesanCaption = 'Struk Pembayaran ' + jenisLabel +
+    (d.nama_siswa ? (' — ' + d.nama_siswa) : '') +
+    (nomorWa ? ('\nKirim ke wali santri: +' + nomorWa) : '');
+
+  if (navigator.canShare && navigator.canShare({ files: [fileStruk] })){
+    navigator.share({
+      files: [fileStruk],
+      title: 'Struk Pembayaran ' + jenisLabel,
+      text: pesanCaption
+    }).then(function(){
+      toast('Struk berhasil dibagikan.', 'success');
+      // Modal tetap terbuka agar admin bisa cetak juga jika perlu
+    }).catch(function(err){
+      if (err && err.name === 'AbortError') return;
+      unduhStrukDanBukaChatWA(fileStruk, d, jenisLabel, nomorWa);
+    });
+    return;
+  }
+
+  unduhStrukDanBukaChatWA(fileStruk, d, jenisLabel, nomorWa);
+}
+
+function unduhStrukDanBukaChatWA(fileStruk, d, jenisLabel, nomorWa){
+  // Unduh gambar struk PNG ke perangkat (galeri/folder Download)
+  var url = URL.createObjectURL(fileStruk);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = fileStruk.name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+
+  if (nomorWa){
+    var pesan = '*Struk Pembayaran*\n' +
+      PESANTREN_NAMA + '\n\n' +
+      'Tanggal: ' + tanggalJamID(d.tanggal_bayar) + '\n' +
+      'Nama Siswa: ' + (d.nama_siswa || '-') + '\n' +
+      'Jenis: ' + jenisLabel + '\n' +
+      'Nominal: ' + rupiah(d.nominal) + '\n' +
+      'Keterangan: ' + (d.keterangan || jenisLabel) + '\n' +
+      'Status: Diterima\n\n' +
+      'Gambar struk sudah otomatis tersimpan di galeri/unduhan HP ini. Mohon lampirkan gambar tersebut pada chat ini.\n\n' +
+      'Terima kasih atas pembayarannya. Simpan struk ini sebagai bukti pembayaran.';
+    toast('Gambar struk tersimpan. Chat WA dibuka, silakan lampirkan gambarnya.', 'success');
+    window.open('https://wa.me/' + nomorWa + '?text=' + encodeURIComponent(pesan), '_blank');
+  } else {
+    toast('Gambar struk tersimpan. Nomor WA orang tua tidak tersedia, kirim manual.', 'error');
+  }
+  // Modal tetap terbuka agar admin bisa cetak juga jika perlu
+}
+
+/* ================================== START ===================================== */
+boot();
+
+</script>
+</body>
+</html>
